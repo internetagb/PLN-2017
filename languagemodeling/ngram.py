@@ -100,16 +100,20 @@ class NGramGenerator:
         model -- n-gram model.
         """
         self.probs = probs = defaultdict(dict)
+        self.sorted_probs = sorted_probs = defaultdict(dict)
         self.n = n = model.n
         counts = model.counts
 
-        for words, values in counts.items():
+        for words in counts.keys():
             if len(words) == n:
                 token = words[n-1]
                 prev_tokens = words[:n-1]
                 if prev_tokens not in probs:
                     probs.update({prev_tokens: defaultdict(dict)})
+                    sorted_probs.update({prev_tokens: []})
                 current_prob = model.cond_prob(token, list(prev_tokens))
+                sorted_probs[prev_tokens].append((token, current_prob))
+                sorted_probs[prev_tokens].sort()
                 probs[prev_tokens].update({token: current_prob})
 
     def generate_sent(self):
