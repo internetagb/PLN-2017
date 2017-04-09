@@ -2,9 +2,15 @@
 from collections import defaultdict
 from math import log
 
+
 def ngram_delim(n, sent):
     sent = ['<s>']*(n-1) + sent + ['</s>']
     return sent
+
+
+def log2(x):
+    return log(x, 2)
+
 
 class NGram(object):
 
@@ -30,7 +36,6 @@ class NGram(object):
         """
         return self.counts[tokens]
 
-
     def cond_prob(self, token, prev_tokens=None):
         """Conditional probability of a token.
         token -- the token.
@@ -38,7 +43,7 @@ class NGram(object):
         """
         n = self.n
         if not prev_tokens:
-             prev_tokens = []
+            prev_tokens = []
         assert len(prev_tokens) == n - 1
 
         tokens = prev_tokens + [token]
@@ -52,7 +57,6 @@ class NGram(object):
             prob = float(p1)/p2
 
         return prob
-
 
     def sent_prob(self, sent):
         """Probability of a sentence. Warning: subject to underflow problems.
@@ -69,12 +73,10 @@ class NGram(object):
 
         return prob
 
-
     def sent_log_prob(self, sent):
         """Log-probability of a sentence.
         sent -- the sentence as a list of tokens.
         """
-        log2 = lambda x: log(x, 2)
         n = self.n
         prob = 0
         sent = ngram_delim(n, sent)
