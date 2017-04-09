@@ -30,6 +30,8 @@ if __name__ == '__main__':
         | \.\.\.            # ellipsis
         | [][.,;"'?():-_`]  # these are separate tokens; includes ], [
     '''
+    #sent_tokenizer = nltk.data.load('tokenizers/punkt/spanish.pickle')
+    #corpus = PlaintextCorpusReader(path2, 'corpus.txt', word_tokenizer=tokenizer, sent_tokenizer=sent_tokenizer)
 
     tokenizer = RegexpTokenizer(pattern)
 
