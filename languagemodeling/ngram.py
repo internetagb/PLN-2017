@@ -1,6 +1,10 @@
 # https://docs.python.org/3/library/collections.html
 from collections import defaultdict
+from math import log
 
+def ngram_delim(n, sent):
+    sent = ['<s>']*(n-1) + sent + ['</s>']
+    return sent
 
 class NGram(object):
 
@@ -14,9 +18,7 @@ class NGram(object):
         self.counts = counts = defaultdict(int)
 
         for sent in sents:
-            for _ in range(n-1):
-                sent = ['<s>'] + sent
-            sent = sent + ['</s>']
+            sent = ngram_delim(n, sent)
             for i in range(len(sent) - n + 1):
                 ngram = tuple(sent[i: i + n])
                 counts[ngram] += 1
@@ -36,11 +38,20 @@ class NGram(object):
         """
         n = self.n
         if not prev_tokens:
-            prev_tokens = []
+             prev_tokens = []
         assert len(prev_tokens) == n - 1
 
         tokens = prev_tokens + [token]
-        return float(self.counts[tuple(tokens)])/self.counts[tuple(prev_tokens)]
+
+        p1 = self.counts[tuple(tokens)]
+        p2 = self.counts[tuple(prev_tokens)]
+
+        prob = 0
+
+        if p2 != 0:
+            prob = float(p1)/p2
+
+        return prob
 
 
     def sent_prob(self, sent):
@@ -48,23 +59,33 @@ class NGram(object):
         sent -- the sentence as a list of tokens.
         """
         n = self.n
-        l = len(sent)
-        r = []
+        prob = 1
+        sent = ngram_delim(n, sent)
 
-        for _ in range(n-1):
-            sent = ['<s>'] + sent
-        sent = sent + ['<\s>']
+        for i in range(n-1, len(sent)):
+            prev_tokens = sent[i-n+1:i]
+            token = sent[i]
+            prob *= self.cond_prob(token, prev_tokens)
 
-        for i in range(l):
-            if i < n:
-                r += cond_prob(self, sent[i])
-            else:
-                token = sent[i]
-                prev_tokens = sent[i-n+1:i]
-                r += cond_prob(self, token, prev_tokens)
+        return prob
 
 
     def sent_log_prob(self, sent):
         """Log-probability of a sentence.
         sent -- the sentence as a list of tokens.
         """
+        log2 = lambda x: log(x, 2)
+        n = self.n
+        prob = 0
+        sent = ngram_delim(n, sent)
+
+        for i in range(n-1, len(sent)):
+            prev_tokens = sent[i-n+1:i]
+            token = sent[i]
+            prob_temp = self.cond_prob(token, prev_tokens)
+            if prob_temp == 0:
+                prob = float('-inf')
+            else:
+                prob += log2(prob_temp)
+
+        return prob
