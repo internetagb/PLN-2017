@@ -91,3 +91,31 @@ class NGram(object):
                 prob += log2(prob_temp)
 
         return prob
+
+
+class NGramGenerator:
+
+    def __init__(self, model):
+        """
+        model -- n-gram model.
+        """
+        self.probs = probs = defaultdict(dict)
+        self.n = n = model.n
+        counts = model.counts
+
+        for words, values in counts.items():
+            if len(words) == n:
+                token = words[n-1]
+                prev_tokens = words[:n-1]
+                if prev_tokens not in probs:
+                    probs.update({prev_tokens: defaultdict(dict)})
+                current_prob = model.cond_prob(token, list(prev_tokens))
+                probs[prev_tokens].update({token: current_prob})
+
+    def generate_sent(self):
+        """Randomly generate a sentence."""
+
+    def generate_token(self, prev_tokens=None):
+        """Randomly generate a token, given prev_tokens.
+        prev_tokens -- the previous n-1 tokens (optional only if n = 1).
+        """
