@@ -11,10 +11,24 @@ Options:
   -h --help     Show this screen.
 """
 
+import pickle
 from docopt import docopt
+from languagemodeling.ngram import NGram, NGramGenerator
+# from nltk.corpus import PlaintextCorpusReader as PCR
+# from nltk.tokenize import RegexpTokenizer
 
 if __name__ == '__main__':
     opts = docopt(__doc__)
 
-    file = opts['-i']
+    path = str(opts['-i'])
     n = int(opts['-n'])
+
+    file = open(path, 'rb')
+
+    model = pickle.load(file)
+
+    generator = NGramGenerator(model)
+
+    for _ in range(n):
+        print("\n")
+        print(' '.join(generator.generate_sent()))
