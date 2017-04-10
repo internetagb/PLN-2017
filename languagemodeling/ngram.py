@@ -1,6 +1,7 @@
 # https://docs.python.org/3/library/collections.html
 from collections import defaultdict
 from math import log
+from random import random
 
 
 def ngram_delim(n, sent):
@@ -123,3 +124,18 @@ class NGramGenerator:
         """Randomly generate a token, given prev_tokens.
         prev_tokens -- the previous n-1 tokens (optional only if n = 1).
         """
+        if not prev_tokens:
+            prev_tokens = []
+
+        tokens = self.sorted_probs[prev_tokens]
+        prob = 0
+        X = random()
+        gen_token = ''
+        i = 0
+
+        while prob < X:
+            gen_token, prob_token = tokens[i]
+            prob += prob_token
+            i += 1
+
+        return gen_token
