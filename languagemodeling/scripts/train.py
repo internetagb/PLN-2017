@@ -9,19 +9,16 @@ Options:
   -o <file>     Output model file.
   -h --help     Show this screen.
 """
-# from docopt import docopt
-# import pickle
 
-# from nltk.corpus import gutenberg
-
-# from languagemodeling.ngram import NGram
-
-import nltk
-from nltk.corpus import PlaintextCorpusReader as PCR
+import pickle
+from docopt import docopt
+from nltk.data import load
+from languagemodeling.ngram import NGram
 from nltk.tokenize import RegexpTokenizer
+from nltk.corpus import PlaintextCorpusReader as PCR
 
 if __name__ == '__main__':
-    # opts = docopt(__doc__)
+    opts = docopt(__doc__)
 
     pattern = r'''(?ix)    # set flag to allow verbose regexps
         (?:Inc\.|sra\.|sr\.)
@@ -32,7 +29,8 @@ if __name__ == '__main__':
         | [][.,;"'?():-_`]  # these are separate tokens; includes ], [
     '''
 
-    sent_tokenizer = nltk.data.load('tokenizers/punkt/spanish.pickle')
+    # load the data
+    sent_tokenizer = load('tokenizers/punkt/spanish.pickle')
 
     tokenizer = RegexpTokenizer(pattern)
 
@@ -41,19 +39,14 @@ if __name__ == '__main__':
     corpus = PCR(path, 'corpus.txt', word_tokenizer=tokenizer,
                  sent_tokenizer=sent_tokenizer)
 
-    for i in range(5):
-        print("\n")
-        print(corpus.sents()[i])
+    sents = corpus.sents()
 
-    # # load the data
-    # sents = gutenberg.sents('austen-emma.txt')
+    # train the model
+    n = int(opts['-n'])
+    model = NGram(n, sents)
 
-    # # train the model
-    # n = int(opts['-n'])
-    # model = NGram(n, sents)
-
-    #   # save it
-    # filename = opts['-o']
-    # f = open(filename, 'wb')
-    # pickle.dump(model, f)
-    # f.close()
+    # save it
+    filename = opts['-o']
+    f = open(filename, 'wb')
+    pickle.dump(model, f)
+    f.close()
