@@ -29,6 +29,9 @@ if __name__ == '__main__':
 
     generator = NGramGenerator(model)
 
+    path2 = "/home/alangb/Escritorio/out.txt"
+    output = open(path2, 'w')
     for _ in range(n):
-        print("\n")
-        print(' '.join(generator.generate_sent()))
+        output.write(' '.join(generator.generate_sent())+"\n")
+    output.close()
+    file.close()
