@@ -119,13 +119,26 @@ class NGramGenerator:
 
     def generate_sent(self):
         """Randomly generate a sentence."""
+        n = self.n
+
+        prev_tokens = tuple(['<s>'] * (n-1))
+        end_delim = '</s>'
+        new_token = ''
+        sent = []
+
+        while new_token != end_delim:
+            new_token = self.generate_token(prev_tokens)
+            sent.append(new_token)
+            prev_tokens = tuple(sent[len(sent)-n+1:])
+
+        return sent[:-1]
 
     def generate_token(self, prev_tokens=None):
         """Randomly generate a token, given prev_tokens.
         prev_tokens -- the previous n-1 tokens (optional only if n = 1).
         """
         if not prev_tokens:
-            prev_tokens = []
+            prev_tokens = ()
 
         tokens = self.sorted_probs[prev_tokens]
         prob = 0
