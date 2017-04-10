@@ -111,6 +111,7 @@ class NGramGenerator:
                 prev_tokens = words[:n-1]
                 if prev_tokens not in probs:
                     probs.update({prev_tokens: defaultdict(dict)})
+                if prev_tokens not in sorted_probs:
                     sorted_probs.update({prev_tokens: []})
                 current_prob = model.cond_prob(token, list(prev_tokens))
                 sorted_probs[prev_tokens].append((token, current_prob))
@@ -121,17 +122,16 @@ class NGramGenerator:
         """Randomly generate a sentence."""
         n = self.n
 
-        prev_tokens = tuple(['<s>'] * (n-1))
+        sent = prev_tokens = ['<s>'] * (n-1)
         end_delim = '</s>'
         new_token = ''
-        sent = []
 
         while new_token != end_delim:
-            new_token = self.generate_token(prev_tokens)
+            new_token = self.generate_token(tuple(prev_tokens))
             sent.append(new_token)
             prev_tokens = tuple(sent[len(sent)-n+1:])
 
-        return sent[:-1]
+        return sent[n-1:len(sent)-1]
 
     def generate_token(self, prev_tokens=None):
         """Randomly generate a token, given prev_tokens.
