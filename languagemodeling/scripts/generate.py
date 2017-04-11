@@ -13,9 +13,7 @@ Options:
 
 import pickle
 from docopt import docopt
-from languagemodeling.ngram import NGram, NGramGenerator
-# from nltk.corpus import PlaintextCorpusReader as PCR
-# from nltk.tokenize import RegexpTokenizer
+from languagemodeling.ngram import NGramGenerator
 
 if __name__ == '__main__':
     opts = docopt(__doc__)
