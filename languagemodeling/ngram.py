@@ -152,3 +152,14 @@ class NGramGenerator:
             i += 1
 
         return gen_token
+
+
+class AddOneNGram(NGram):
+
+    """
+       Todos los métodos de NGram.
+    """
+
+    def V(self):
+        """Size of the vocabulary.
+        """
