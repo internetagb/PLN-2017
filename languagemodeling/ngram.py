@@ -156,10 +156,38 @@ class NGramGenerator:
 
 class AddOneNGram(NGram):
 
-    """
-       Todos los métodos de NGram.
-    """
+    def __init__(self, n, sents):
+
+        super().__init__(n, sents)
+
+        word_types = set(word for sent in sents for word in sent)
+
+        self.vocabulary_size = len(word_types) + 1
+
 
     def V(self):
         """Size of the vocabulary.
         """
+        return self.vocabulary_size
+
+    def cond_prob(self, token, prev_tokens=None):
+        """Conditional probability of a token.
+        token -- the token.
+        prev_tokens -- the previous n-1 tokens (optional only if n = 1).
+        """
+        n = self.n
+        if not prev_tokens:
+            prev_tokens = []
+        assert len(prev_tokens) == n - 1
+
+        tokens = prev_tokens + [token]
+
+        p1 = float(self.counts[tuple(tokens)]) + 1
+        p2 = self.counts[tuple(prev_tokens)] + self.V()
+
+        prob = 0
+
+        if p2 != 0:
+            prob = float(p1)/p2
+
+        return prob
