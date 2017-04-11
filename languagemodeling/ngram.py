@@ -111,12 +111,12 @@ class NGramGenerator:
                 prev_tokens = words[:n-1]
                 if prev_tokens not in probs:
                     probs.update({prev_tokens: defaultdict(dict)})
-                if prev_tokens not in sorted_probs:
                     sorted_probs.update({prev_tokens: []})
                 current_prob = model.cond_prob(token, list(prev_tokens))
-                sorted_probs[prev_tokens].append((token, current_prob))
-                sorted_probs[prev_tokens].sort()
                 probs[prev_tokens].update({token: current_prob})
+                sorted_probs[prev_tokens].append((token, current_prob))
+                sorted_probs[prev_tokens] = sorted(sorted_probs[prev_tokens],
+                                                   key=lambda x: (-x[1], x[0]))
 
     def generate_sent(self):
         """Randomly generate a sentence."""
