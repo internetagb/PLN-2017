@@ -164,7 +164,6 @@ class AddOneNGram(NGram):
 
         self.vocabulary_size = len(word_types) + 1
 
-
     def V(self):
         """Size of the vocabulary.
         """

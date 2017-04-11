@@ -17,7 +17,7 @@ Options:
 import pickle
 from docopt import docopt
 from nltk.data import load
-from languagemodeling.ngram import NGram
+from languagemodeling.ngram import NGram, AddOneNGram
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import PlaintextCorpusReader as PCR
 
@@ -47,7 +47,12 @@ if __name__ == '__main__':
 
     # train the model
     n = int(opts['-n'])
-    model = NGram(n, sents)
+    mode = str(opts['-m'])
+
+    if mode == "addone":
+        model = AddOneNGram(n, sents)
+    else:
+        model = NGram(n, sents)
 
     # save it
     filename = opts['-o']
