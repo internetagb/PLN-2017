@@ -26,7 +26,7 @@ Ejercicio 2
 >El analisis, se hace trabajando con la *supocición de Markov*,
 >para calcular las probabilidades necesarias, utilizando el modelo de n-gramas.
 >Para implementarlo, se hace una clase "NGram", utilizando marcadores de
->comienzo y final de oración (\<s>" y \</s> respectivamente).
+>comienzo y final de oración (\<s> y \</s> respectivamente).
 
 ### Idea general de la clase NGram
 >Describiremos brevemente lo que se hizo para que NGram cumpla su objetivo.
@@ -92,6 +92,14 @@ Ejercicio 3
 
 ### Ejemplos de oraciones generadas
 
+>Vamos a ver que a medida que aumenta el tamaño de los n-gramas, las oraciones
+>generadas, cobran mas sentido, desde el caso de unigramas, que simplemente es
+>un sorteo aleatorio de palabras, hasta los cuatrigramas, que ya generan
+>oraciones con mucho más sentido.
+>Si el n es muy grande, las oraciónes tendrán mucho sentido (a no ser que las
+>del corpus original no lo tengan), ya que serán prácticamente las oraciones
+>tal cual aparecen en el corpus.
+
 ##### Unigramas
 
 >Todos o las . el en cuando casa actividad y cubiertos como . de El que
@@ -142,41 +150,3 @@ Ejercicio 3
 
 >El único vínculo que le quedó de aquel descalabro a Florentino Ariza en su
 >primer viaje a Europa .
-
-
-
-
-> A medida que aumenta el tamaño de los n-gramas, las oraciones generadas,
->cobran mas sentido, desde el caso de unigramas, que simplemente es un sorteo
->aleatorio de palabras, hasta los cuatrigramas, que ya generan oraciones con
->mucho más sentido.
-> Si el n es muy grande, las oraciónes tendrán mucho sentido (a no ser que las
->del corpus original no lo tengan), ya que serán prácticamente las oraciones
->tal cual aparecen en el corpus.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
