@@ -44,4 +44,5 @@ if __name__ == '__main__':
     sents = corpus.sents()
 
     # calculate (and print) perplexity
-    print(model.perplexity(sents))
+    perplexity = model.perplexity(sents)
+    print("Perplexity: " + str(perplexity))
