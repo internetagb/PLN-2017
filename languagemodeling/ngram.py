@@ -205,7 +205,7 @@ class AddOneNGram(NGram):
         super().__init__(n, sents)
 
         word_types = set(word for sent in sents for word in sent)
-        # add 1 because of end of sentece delimiter.
+        # add 1 because of "end of sentece"('</s>') delimiter.
         self.vocabulary_size = len(word_types) + 1
 
     def V(self):
@@ -221,16 +221,19 @@ class AddOneNGram(NGram):
         n = self.n
         if not prev_tokens:
             prev_tokens = []
-        assert len(prev_tokens) == n - 1
+        assert len(prev_tokens) == n - 1    # check n-gram size
 
         tokens = prev_tokens + [token]
-
+        # appearances of (prev_tokens,tokens), plus one (addOne).
         p1 = float(self.counts[tuple(tokens)]) + 1
+        # appearances of prev_tokens plus vocabulary size.
         p2 = self.counts[tuple(prev_tokens)] + self.V()
 
         prob = 0
 
         if p2 != 0:
+            # calculate probability
+            # (c(prev_token,token) + 1) / (c(prev_token) + V)
             prob = float(p1)/p2
 
         return prob
