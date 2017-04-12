@@ -24,6 +24,7 @@ from nltk.corpus import PlaintextCorpusReader as PCR
 if __name__ == '__main__':
     opts = docopt(__doc__)
 
+    # set pattern for tokenize
     pattern = r'''(?ix)    # set flag to allow verbose regexps
         (?:Inc\.|sra\.|sr\.)
         | (?:[A-Z]\.)+        # abbreviations, e.g. U.S.A.
@@ -33,22 +34,20 @@ if __name__ == '__main__':
         | [][.,;"'?():-_`]  # these are separate tokens; includes ], [
     '''
 
-    # load the data
+    # set tokenizer
     sent_tokenizer = load('tokenizers/punkt/spanish.pickle')
-
     tokenizer = RegexpTokenizer(pattern)
-
+    # corpus path
     path = '/home/alangb/Escritorio/'
-
+    # load data
     corpus = PCR(path, 'corpus.txt', word_tokenizer=tokenizer,
                  sent_tokenizer=sent_tokenizer)
-
+    # store tokenized sents
     sents = corpus.sents()
 
-    # train the model
+    # train the (chosen) model
     n = int(opts['-n'])
     mode = str(opts['-m'])
-
     if mode == "addone":
         model = AddOneNGram(n, sents)
     else:
