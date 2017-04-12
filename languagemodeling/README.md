@@ -26,7 +26,7 @@ Ejercicio 2
 >El analisis, se hace trabajando con la *supocición de Markov*,
 >para calcular las probabilidades necesarias, utilizando el modelo de n-gramas.
 >Para implementarlo, se hace una clase "NGram", utilizando marcadores de
->comienzo y final de oración ("<s>" y "</s>" respectivamente).
+>comienzo y final de oración (\<s>" y \</s> respectivamente).
 
 ### Idea general de la clase NGram
 >Describiremos brevemente lo que se hizo para que NGram cumpla su objetivo.
@@ -87,7 +87,7 @@ Ejercicio 3
 >el *Método de la transformación inversa*.
 >A medida que voy eligiendo palabras, las voy agregando a la oración (que
 >se tiene en ese instante) hasta que aparezca un final de oración, detectado
->con el delimitador "</s>".
+>con el delimitador \</s>.
 
 
 ### Ejemplos de oraciones generadas
