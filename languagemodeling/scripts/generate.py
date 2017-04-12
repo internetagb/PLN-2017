@@ -17,19 +17,15 @@ from languagemodeling.ngram import NGramGenerator
 
 if __name__ == '__main__':
     opts = docopt(__doc__)
-
+    # read options
     path = str(opts['-i'])
     n = int(opts['-n'])
-
+    # open model file
     file = open(path, 'rb')
-
+    # load model file
     model = pickle.load(file)
-
+    # create generator
     generator = NGramGenerator(model)
-
-    path2 = "/home/alangb/Escritorio/out.txt"
-    output = open(path2, 'w')
+    # print sentences while generate them.
     for _ in range(n):
-        output.write(' '.join(generator.generate_sent())+"\n")
-    output.close()
-    file.close()
+        print(' '.join(generator.generate_sent())+"\n")
