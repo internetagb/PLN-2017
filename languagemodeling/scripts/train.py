@@ -40,7 +40,7 @@ if __name__ == '__main__':
     # corpus path
     path = '/home/alangb/Escritorio/'
     # load data
-    corpus = PCR(path, 'corpus.txt', word_tokenizer=tokenizer,
+    corpus = PCR(path, 'corpus_train.txt', word_tokenizer=tokenizer,
                  sent_tokenizer=sent_tokenizer)
     # store tokenized sents
     sents = corpus.sents()
