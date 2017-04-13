@@ -205,3 +205,60 @@ class TestExtras(TestCase):
             sent2 = generator2.generate_sent()
             self.assertTrue(' '.join(sent) in sents)
             self.assertTrue(' '.join(sent2) in sents)
+
+    def test_count_3_addone_ngram(self):
+        sents_group = [self.sents2, self.sents]
+        counts = {
+            ('<s>', 'el'): 1,
+            ('el', 'gato'): 1,
+            ('gato', 'come'): 1,
+            ('come', 'pescado'): 1,
+            ('pescado', '.'): 1,
+            ('<s>', '<s>'): 2,
+            ('<s>', 'la'): 1,
+            ('la', 'gata'): 1,
+            ('gata', 'come'): 1,
+            ('come', 'salmón'): 1,
+            ('salmón', '.'): 1,
+            ('<s>', '<s>', 'el') : 1,
+            ('<s>', 'el', 'gato') : 1,
+            ('el', 'gato', 'come') : 1,
+            ('gato', 'come', 'pescado') : 1,
+            ('come', 'pescado', '.') : 1,
+            ('pescado', '.', '</s>') : 1,
+            ('<s>', '<s>', 'la') : 1,
+            ('<s>', 'la', 'gata') : 1,
+            ('la', 'gata', 'come') : 1,
+            ('gata', 'come', 'salmón') : 1,
+            ('come', 'salmón', '.') : 1,
+            ('salmón', '.', '</s>') : 1,
+        }
+        i = 0
+        for sents_chosen in sents_group:
+            model = AddOneNGram(3, sents_chosen)
+            # sent2 vocab size = 8 and sent vocab size = 9
+            # (this explains use of i)
+            self.assertEqual(model.V(), 8+i)
+            i += 1
+
+    def test_cond_prob_3_addone_gram(self):
+        model = AddOneNGram(3, self.sents)
+
+        probs = {
+            ('pescado', ('gato','come')): (1.0 + 1.0) / (1.0 + 9.0),
+            ('salmón', ('gata','come')): (1.0 + 1.0) / (1.0 + 9.0),
+            ('salame', ('gato','come')): 1.0 / (1.0 + 9.0),
+        }
+        for (token, prev), p in probs.items():
+            self.assertEqual(model.cond_prob(token, list(prev)), p)
+
+    def test_cond_prob_4_addone_gram(self):
+        model = AddOneNGram(4, self.sents)
+
+        probs = {
+            ('pescado', ('el', 'gato','come')): (1.0 + 1.0) / (1.0 + 9.0),
+            ('salmón', ('la', 'gata','come')): (1.0 + 1.0) / (1.0 + 9.0),
+            ('salame', ('el', 'gato','come')): 1.0 / (1.0 + 9.0),
+        }
+        for (token, prev), p in probs.items():
+            self.assertEqual(model.cond_prob(token, list(prev)), p)
