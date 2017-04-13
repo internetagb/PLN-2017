@@ -100,7 +100,7 @@ Ejercicio 3
 >del corpus original no lo tengan), ya que serán prácticamente las oraciones
 >tal cual aparecen en el corpus.
 
-##### Unigramas
+#### Unigramas
 
 >Todos o las . el en cuando casa actividad y cubiertos como . de El que
 
@@ -150,3 +150,49 @@ Ejercicio 3
 
 >El único vínculo que le quedó de aquel descalabro a Florentino Ariza en su
 >primer viaje a Europa .
+
+
+Ejercicio 4
+-----------
+
+>Se quiere hacer un "Suavizado add-one".
+>Para esto implementamos la clase *AddOneNGram*, que trabajará de manera muy
+>parecida a *NGram*. Es por esto que *AddOneNGram* hereda de *NGram*.
+>Las únicas modificaciones que se hacen es que al momento de inicializar,
+>se agrega la cantidad de palabras que hay en el vocabulario. El método *V*,
+>que nos devuelve la cantidad de palabras del vocabulario. Se modifica
+>también la manera de calcular las probabilidades, ya que ahora se divide la
+>cantidad de veces que "ocurre un n-grama" + 1, por la cantidad de veces que
+>"ocurre el (n-1)-grama" + V.
+>Además, *train.py* nos ofrece una nueva interfaz que permite optar con que
+>modelo entrenar (*n-gramas clásicos* o *add-one*).
+
+Ejercicio 5
+-----------
+
+>Vamos a separar el corpus en entrenamiento y test (90% y 10%respectivamente).
+>Se quiere evaluar el modelo de lenguajes.
+>Para esto hacemos un nuevo script, *eval.py*, el cual está implementado para
+>calcular presentar los datos de perplejidad de los modelos entrenados.
+>Ahora, extendemos *NGram*, y agregamos métodos que nos permiten calcular la
+>perplejidad.
+>A esto lo realizamos por pasos. Primero calculamos *log-probability* de las
+>oraciones, que se hace sumando las *log-probability* de cada oración.
+>Luego este resultado nos sirve para calcular *cross-entropy*, que resulta de
+>dividir *log-probability* por *M*, donde *M* es la cantidad de palabras total.
+>Finalmente, *perplexity*, se obtiene por 2^(-*cross-entropy*).
+>Ahora, *train.py* trabaja sobre el 90% del corpus original (parte de
+>entrenamiento), y *eval.py* toma el 10% del corpus original (parte de test).
+
+### Resultados de *perplexity*
+
+>n es el tamaño del n-grama.
+>Todos se evaluan con modelo *addone*.
+>Si utilizamos modelos con *n-gramas clásicos* el resultado es infinito.
+
+| n | Perplexity |
+|---|:----------:|
+| 1 | 1338.27    |
+| 2 | 4223.949   |
+| 3 | 25781.79   |
+| 4 | 41327.136  |
