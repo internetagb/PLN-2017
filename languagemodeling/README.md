@@ -25,7 +25,7 @@ Ejercicio 2
 
 >El analisis, se hace trabajando con la *supocición de Markov*,
 >para calcular las probabilidades necesarias, utilizando el modelo de n-gramas.
->Para implementarlo, se hace una clase "NGram", utilizando marcadores de
+>Para implementarlo, se hace una clase "NGram", agregando marcadores de
 >comienzo y final de oración (\<s> y \</s> respectivamente).
 
 ### Idea general de la clase NGram
@@ -35,7 +35,7 @@ Ejercicio 2
 >Se necesita saber con que orden de modelo de n-gramas se va a
 >trabajar, es decir, el valor de 'n', y conocer las oraciones que se van a
 >analizar.
->Lo que hace es contar la cantidad de veces que ocurre cada n-grama y
+>Lo que se hace es contar la cantidad de veces que ocurre cada n-grama y
 >(n-1)-grama correspondientes a las oraciones ingresadas, para posibilitar el
 >calculo de probabilidades. Estas "cantidades" se guardan en un "diccionario".
 
@@ -62,7 +62,7 @@ Ejercicio 3
 
 >Todo lo anterior, nos dejó las herramientas necesarias para poder generar
 >oraciones de lenguaje natural.
->Lo que haremos es describir como se generan, esas oraciones y además mostrar
+>Lo que haremos es describir como se generan esas oraciones y además mostrar
 >algunos ejemplos de lo generado.
 
 ### Entrenamiento previo
@@ -159,11 +159,11 @@ Ejercicio 4
 >Para esto implementamos la clase *AddOneNGram*, que trabajará de manera muy
 >parecida a *NGram*. Es por esto que *AddOneNGram* hereda de *NGram*.
 >Las únicas modificaciones que se hacen es que al momento de inicializar,
->se agrega la cantidad de palabras que hay en el vocabulario. El método *V*,
->que nos devuelve la cantidad de palabras del vocabulario. Se modifica
->también la manera de calcular las probabilidades, ya que ahora se divide la
->cantidad de veces que "ocurre un n-grama" + 1, por la cantidad de veces que
->"ocurre el (n-1)-grama" + V.
+>se agrega la cantidad de palabras que hay en el vocabulario. Se agrega
+>el método *V*, que nos devuelve la cantidad de palabras del vocabulario y
+>se modifica también la manera de calcular las probabilidades, ya que ahora se
+>divide la cantidad de veces que "ocurre un n-grama" + 1, por la cantidad de
+>veces que "ocurre el (n-1)-grama" + V.
 >Además, *train.py* nos ofrece una nueva interfaz que permite optar con que
 >modelo entrenar (*n-gramas clásicos* o *add-one*).
 
@@ -173,7 +173,7 @@ Ejercicio 5
 >Vamos a separar el corpus en entrenamiento y test (90% y 10%respectivamente).
 >Se quiere evaluar el modelo de lenguajes.
 >Para esto hacemos un nuevo script, *eval.py*, el cual está implementado para
->calcular presentar los datos de perplejidad de los modelos entrenados.
+>presentar los datos de perplejidad de los modelos entrenados.
 >Ahora, extendemos *NGram*, y agregamos métodos que nos permiten calcular la
 >perplejidad.
 >A esto lo realizamos por pasos. Primero calculamos *log-probability* de las
