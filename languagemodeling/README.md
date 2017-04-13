@@ -200,3 +200,5 @@ Ejercicio 5
 >Vemos que *addone* no es bueno para n-gramas, ya que da valores muy altos
 >a medida que aumenta n.
 >Recordemos que mientras mas bajo sea el valor de *perplexity*, mejor.
+
+>NOTA: Se agregaron nuevos tests en tests/test_extras.py
