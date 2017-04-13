@@ -196,3 +196,7 @@ Ejercicio 5
 | 2 | 4223.949   |
 | 3 | 25781.79   |
 | 4 | 41327.136  |
+
+>Vemos que *addone* no es bueno para n-gramas, ya que da valores muy altos
+>a medida que aumenta n.
+>Recordemos que mientras mas bajo sea el valor de *perplexity*, mejor.
