@@ -4,6 +4,14 @@ from unittest import TestCase
 from languagemodeling.ngram import NGram, NGramGenerator, AddOneNGram
 from math import log
 
+
+def log2(x):
+    """Calculate log (base 2) of x.
+    """
+    assert x > 0
+    return log(x, 2)
+
+
 class TestExtras(TestCase):
 
     def setUp(self):
@@ -42,18 +50,18 @@ class TestExtras(TestCase):
             ('gata', 'come'): 1,
             ('come', 'salmón'): 1,
             ('salmón', '.'): 1,
-            ('<s>', '<s>', 'el') : 1,
-            ('<s>', 'el', 'gato') : 1,
-            ('el', 'gato', 'come') : 1,
-            ('gato', 'come', 'pescado') : 1,
-            ('come', 'pescado', '.') : 1,
-            ('pescado', '.', '</s>') : 1,
-            ('<s>', '<s>', 'la') : 1,
-            ('<s>', 'la', 'gata') : 1,
-            ('la', 'gata', 'come') : 1,
-            ('gata', 'come', 'salmón') : 1,
-            ('come', 'salmón', '.') : 1,
-            ('salmón', '.', '</s>') : 1,
+            ('<s>', '<s>', 'el'): 1,
+            ('<s>', 'el', 'gato'): 1,
+            ('el', 'gato', 'come'): 1,
+            ('gato', 'come', 'pescado'): 1,
+            ('come', 'pescado', '.'): 1,
+            ('pescado', '.', '</s>'): 1,
+            ('<s>', '<s>', 'la'): 1,
+            ('<s>', 'la', 'gata'): 1,
+            ('la', 'gata', 'come'): 1,
+            ('gata', 'come', 'salmón'): 1,
+            ('come', 'salmón', '.'): 1,
+            ('salmón', '.', '</s>'): 1,
         }
 
         for gram, c in counts.items():
@@ -66,36 +74,34 @@ class TestExtras(TestCase):
             ('pescado', ('gato', 'come')): 1,
             ('salmón', ('gata', 'come')): 1,
             ('salame', ('gato', 'come')): 0.0,
-            ('gato', ('<s>', 'el')) : 1,
-            ('gata', ('<s>', 'el')) : 0.0,
+            ('gato', ('<s>', 'el')): 1,
+            ('gata', ('<s>', 'el')): 0.0,
         }
 
         for (token, prev), p in probs.items():
             self.assertEqual(ngram.cond_prob(token, list(prev)), p)
-
 
     def test_cond_prob_4gram(self):
         ngram = NGram(4, self.sents2)
 
         probs = {
-            ('pescado', ('el','gato', 'come')): 1,
+            ('pescado', ('el', 'gato', 'come')): 1,
             ('salmón', ('la', 'gata', 'come')): 0.0,
             ('salame', ('el', 'gato', 'come')): 0.0,
-            ('gato', ('<s>', '<s>', 'el')) : 1,
-            ('viejo', ('gato','come', 'pescado')) : 0.5,
-            ('fresco', ('gato','come', 'pescado')) : 0.5,
+            ('gato', ('<s>', '<s>', 'el')): 1,
+            ('viejo', ('gato', 'come', 'pescado')): 0.5,
+            ('fresco', ('gato', 'come', 'pescado')): 0.5,
         }
 
         for (token, prev), p in probs.items():
             self.assertEqual(ngram.cond_prob(token, list(prev)), p)
-
 
     def test_sent_prob_3and4gram(self):
         ngram = NGram(3, self.sents3)
         ngram2 = NGram(4, self.sents3)
 
         sents = {
-            'el gato come pescado y ronca .': 0.0, # 'ronca' unseen
+            'el gato come pescado y ronca .': 0.0,  # 'ronca' unseen
             'la la la': 0.0,  # 'la' after 'la' unseen
             # la probabilidad se da por el principio,
             # si empieza con 'la' o 'el'
@@ -104,14 +110,15 @@ class TestExtras(TestCase):
         }
 
         for sent, prob in sents.items():
-            self.assertAlmostEqual(ngram.sent_prob(sent.split()), prob, msg=sent)
-            self.assertAlmostEqual(ngram2.sent_prob(sent.split()), prob, msg=sent)
+            self.assertAlmostEqual(ngram.sent_prob(sent.split()),
+                                   prob, msg=sent)
+            self.assertAlmostEqual(ngram2.sent_prob(sent.split()),
+                                   prob, msg=sent)
 
     def test_sent_log_prob_3and4gram(self):
         ngram = NGram(3, self.sents2)
         ngram2 = NGram(4, self.sents2)
 
-        log2 = lambda x: log(x, 2)
         sents = {
             'el gato come pescado nuevo .': float('-inf'),  # 'nuevo' unseen
             'la la la': float('-inf'),  # 'la' after 'la' unseen
@@ -120,9 +127,10 @@ class TestExtras(TestCase):
             'el gato come pescado viejo . ': log2(0.5)
         }
         for sent, prob in sents.items():
-            self.assertAlmostEqual(ngram.sent_log_prob(sent.split()), prob, msg=sent)
-            self.assertAlmostEqual(ngram2.sent_log_prob(sent.split()), prob, msg=sent)
-
+            self.assertAlmostEqual(ngram.sent_log_prob(sent.split()),
+                                   prob, msg=sent)
+            self.assertAlmostEqual(ngram2.sent_log_prob(sent.split()),
+                                   prob, msg=sent)
 
     def test_init_3gram(self):
         ngram = NGram(3, self.sents)
@@ -159,7 +167,6 @@ class TestExtras(TestCase):
         self.assertEqual(dict(generator.probs), probs)
         self.assertEqual(generator.sorted_probs, sorted_probs)
 
-
     def test_generate_token_3and4gram(self):
         ngram = NGram(3, self.sents3)
         ngram2 = NGram(4, self.sents3)
@@ -168,10 +175,10 @@ class TestExtras(TestCase):
 
         for i in range(100):
             # after 'come pescado' always comes 'y'
-            token = generator.generate_token(('come','pescado'))
+            token = generator.generate_token(('come', 'pescado'))
             self.assertEqual(token, 'y')
             # after 'come pescado y' always comes 'duerme'
-            token = generator2.generate_token(('come','pescado', 'y'))
+            token = generator2.generate_token(('come', 'pescado', 'y'))
             self.assertEqual(token, 'duerme')
             # sentence may come start with 'el' or 'la'
             token = generator.generate_token(('<s>', '<s>'))
@@ -208,31 +215,6 @@ class TestExtras(TestCase):
 
     def test_count_3_addone_ngram(self):
         sents_group = [self.sents2, self.sents]
-        counts = {
-            ('<s>', 'el'): 1,
-            ('el', 'gato'): 1,
-            ('gato', 'come'): 1,
-            ('come', 'pescado'): 1,
-            ('pescado', '.'): 1,
-            ('<s>', '<s>'): 2,
-            ('<s>', 'la'): 1,
-            ('la', 'gata'): 1,
-            ('gata', 'come'): 1,
-            ('come', 'salmón'): 1,
-            ('salmón', '.'): 1,
-            ('<s>', '<s>', 'el') : 1,
-            ('<s>', 'el', 'gato') : 1,
-            ('el', 'gato', 'come') : 1,
-            ('gato', 'come', 'pescado') : 1,
-            ('come', 'pescado', '.') : 1,
-            ('pescado', '.', '</s>') : 1,
-            ('<s>', '<s>', 'la') : 1,
-            ('<s>', 'la', 'gata') : 1,
-            ('la', 'gata', 'come') : 1,
-            ('gata', 'come', 'salmón') : 1,
-            ('come', 'salmón', '.') : 1,
-            ('salmón', '.', '</s>') : 1,
-        }
         i = 0
         for sents_chosen in sents_group:
             model = AddOneNGram(3, sents_chosen)
@@ -245,9 +227,9 @@ class TestExtras(TestCase):
         model = AddOneNGram(3, self.sents)
 
         probs = {
-            ('pescado', ('gato','come')): (1.0 + 1.0) / (1.0 + 9.0),
-            ('salmón', ('gata','come')): (1.0 + 1.0) / (1.0 + 9.0),
-            ('salame', ('gato','come')): 1.0 / (1.0 + 9.0),
+            ('pescado', ('gato', 'come')): (1.0 + 1.0) / (1.0 + 9.0),
+            ('salmón', ('gata', 'come')): (1.0 + 1.0) / (1.0 + 9.0),
+            ('salame', ('gato', 'come')): 1.0 / (1.0 + 9.0),
         }
         for (token, prev), p in probs.items():
             self.assertEqual(model.cond_prob(token, list(prev)), p)
@@ -256,9 +238,9 @@ class TestExtras(TestCase):
         model = AddOneNGram(4, self.sents)
 
         probs = {
-            ('pescado', ('el', 'gato','come')): (1.0 + 1.0) / (1.0 + 9.0),
-            ('salmón', ('la', 'gata','come')): (1.0 + 1.0) / (1.0 + 9.0),
-            ('salame', ('el', 'gato','come')): 1.0 / (1.0 + 9.0),
+            ('pescado', ('el', 'gato', 'come')): (1.0 + 1.0) / (1.0 + 9.0),
+            ('salmón', ('la', 'gata', 'come')): (1.0 + 1.0) / (1.0 + 9.0),
+            ('salame', ('el', 'gato', 'come')): 1.0 / (1.0 + 9.0),
         }
         for (token, prev), p in probs.items():
             self.assertEqual(model.cond_prob(token, list(prev)), p)
@@ -266,7 +248,6 @@ class TestExtras(TestCase):
     def test_perplexity_calculation(self):
         model = NGram(3, self.sents)
         model2 = NGram(4, self.sents)
-        log2 = lambda x: log(x, 2)
         perplexity = 2**(-(log2(0.5)*2)/10.0)
 
         self.assertEqual(perplexity, model.perplexity(self.sents))
