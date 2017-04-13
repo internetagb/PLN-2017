@@ -262,3 +262,12 @@ class TestExtras(TestCase):
         }
         for (token, prev), p in probs.items():
             self.assertEqual(model.cond_prob(token, list(prev)), p)
+
+    def test_perplexity_calculation(self):
+        model = NGram(3, self.sents)
+        model2 = NGram(4, self.sents)
+        log2 = lambda x: log(x, 2)
+        perplexity = 2**(-(log2(0.5)*2)/10.0)
+
+        self.assertEqual(perplexity, model.perplexity(self.sents))
+        self.assertEqual(perplexity, model2.perplexity(self.sents))
