@@ -48,10 +48,10 @@ class NGram(object):
         token -- the token.
         prev_tokens -- the previous n-1 tokens (optional only if n = 1).
         """
-        n = self.n
+        # n = self.n
         if not prev_tokens:
             prev_tokens = []
-        assert len(prev_tokens) == n - 1    # check n-gram size
+        # assert len(prev_tokens) == n - 1    # check n-gram size
 
         tokens = prev_tokens + [token]
 
@@ -252,6 +252,7 @@ class InterpolatedNGram(NGram):
         self.n = n
         self.counts = counts = defaultdict(int)
         words_count = len(sents)
+        self.gamma = gamma
 
         for sent in sents:
             words_count += len(sent)
@@ -261,3 +262,43 @@ class InterpolatedNGram(NGram):
                     ngram = tuple(sent_tmp[i: i + k])
                     counts[ngram] += 1
         counts[()] = words_count
+
+    def lambdas(self, tokens, lambda_list):
+
+        gamma = self.gamma
+        tokens = tuple(tokens)
+        count = self.counts[tokens]
+        print(tokens)
+        print(count)
+        print(sum(lambda_list))
+        lambd = (1-sum(lambda_list))
+
+        if tokens:
+            lambd *= (count/(count+gamma))
+
+        return lambd
+
+    def cond_prob(self, token, prev_tokens=None):
+
+        n = self.n
+        if not prev_tokens:
+            prev_tokens = []
+        assert len(prev_tokens) == n - 1    # check n-gram size
+        lambda_list = []
+        probs = []
+        prob = 0
+
+        if n == 1:
+            prob = super().cond_prob(token)
+
+        for i in range(n):
+            prev_tokens = prev_tokens[i:]
+            lambd = self.lambdas(prev_tokens, lambda_list)
+            lambda_list.append(lambd)
+            MLprob = super().cond_prob(token, prev_tokens)
+            current_prob = lambda_list[i] * MLprob
+            probs.append(current_prob)
+
+        prob = sum(probs)
+
+        return prob
