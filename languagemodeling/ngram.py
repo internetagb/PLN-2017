@@ -237,3 +237,27 @@ class AddOneNGram(NGram):
             prob = float(p1)/p2
 
         return prob
+
+
+class InterpolatedNGram(NGram):
+
+    def __init__(self, n, sents, gamma=None, addone=True):
+        """
+        n -- order of the model.
+        sents -- list of sentences, each one being a list of tokens.
+        gamma -- interpolation hyper-parameter (if not given, estimate using
+            held-out data).
+        addone -- whether to use addone smoothing (default: True).
+        """
+        self.n = n
+        self.counts = counts = defaultdict(int)
+        words_count = len(sents)
+
+        for sent in sents:
+            words_count += len(sent)
+            for k in range(1, n+1):
+                sent_tmp = ngram_delim(k, sent)
+                for i in range(len(sent_tmp) - k + 1):
+                    ngram = tuple(sent_tmp[i: i + k])
+                    counts[ngram] += 1
+        counts[()] = words_count
