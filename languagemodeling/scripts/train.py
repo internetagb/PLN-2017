@@ -10,6 +10,7 @@ Options:
   -m <model>    Model to use [default: ngram]:
                   ngram: Unsmoothed n-grams.
                   addone: N-grams with add-one smoothing.
+                  inter: N-grams with interpolation smoothing.
   -o <file>     Output model file.
   -h --help     Show this screen.
 """
@@ -17,7 +18,7 @@ Options:
 import pickle
 from docopt import docopt
 from nltk.data import load
-from languagemodeling.ngram import NGram, AddOneNGram
+from languagemodeling.ngram import NGram, AddOneNGram, InterpolatedNGram
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import PlaintextCorpusReader as PCR
 
@@ -50,6 +51,8 @@ if __name__ == '__main__':
     mode = str(opts['-m'])
     if mode == "addone":
         model = AddOneNGram(n, sents)
+    elif mode == "inter":
+        model = InterpolatedNGram(n, sents)
     else:
         model = NGram(n, sents)
 
