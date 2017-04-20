@@ -250,63 +250,72 @@ class InterpolatedNGram(NGram):
         addone -- whether to use addone smoothing (default: True).
         """
         self.n = n
-        self.counts = counts = defaultdict(int)
         self.gamma = gamma
         self.models = models = []
-        words_count = len(sents)
+
+        if gamma:
+            train_sents = sents
+        else:
+            # import pdb; pdb.set_trace()
+            train_sents = sents[:int(0.9*len(sents))]
 
         if addone:
-            models.append(AddOneNGram(1, sents))
+            models.append(AddOneNGram(1, train_sents))
         else:
-            models.append(NGram(1, sents))
+            models.append(NGram(1, train_sents))
 
         for i in range(2, n+1):
-            models.append(NGram(i, sents))
+            models.append(NGram(i, train_sents))
 
-        for sent in sents:
-            words_count += len(sent)
-            for k in range(1, n+1):
-                sent_tmp = ngram_delim(k, sent)
-                for i in range(len(sent_tmp) - k + 1):
-                    ngram = tuple(sent_tmp[i: i + k])
-                    counts[ngram] += 1
-        counts[()] = words_count
+        if not gamma:
+            held_out = sents[int(0.9*len(sents)):]
+            gamma = self.calculate_gamma(held_out)
+
+    def count(self, tokens):
+        n = len(tokens)
+        if n == 0:
+            n = 1
+        return self.models[n-1].counts[tokens]
+
+    def calculate_gamma(self, held_out):
+        max_log_prob = float('-inf')
+        for i in range(200, 600, 50):
+            self.gamma = float(i)
+            log_prob = self.log_probability(held_out)
+            if max_log_prob < log_prob:
+                max_log_prob = log_prob
+                k = i
+
+        self.gamma = k
 
     def lambdas(self, tokens, lambda_list):
 
-        gamma = self.gamma
         tokens = tuple(tokens)
-        count = self.counts[tokens]
+        count = self.count(tokens)
         lambd = (1-sum(lambda_list))
 
         if tokens:
-            lambd *= (count/(count+gamma))
-
+            lambd *= (count/(count+self.gamma))
         return lambd
 
     def cond_prob(self, token, prev_tokens=None):
 
         n = self.n
         models = self.models
-        lambdas = self.lambdas
 
         if not prev_tokens:
             prev_tokens = []
         assert len(prev_tokens) == n - 1    # check n-gram size
 
         lambda_list = []
-        probs = []
-        prob = 0
-        qMLprob = 0
+        prob = 0.0
+        qMLprob = 0.0
 
         for i in range(n):
-            prev_tokens = prev_tokens[i:]
-            lambd = lambdas(prev_tokens, lambda_list)
+            lambd = self.lambdas(prev_tokens, lambda_list)
             lambda_list.append(lambd)
             qMLprob = models[n-1-i].cond_prob(token, prev_tokens)
-            current_prob = lambda_list[i] * qMLprob
-            probs.append(current_prob)
-
-        prob = sum(probs)
+            prob += lambda_list[i] * qMLprob
+            prev_tokens = prev_tokens[1:]
 
         return prob
