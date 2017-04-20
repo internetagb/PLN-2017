@@ -48,10 +48,10 @@ class NGram(object):
         token -- the token.
         prev_tokens -- the previous n-1 tokens (optional only if n = 1).
         """
-        # n = self.n
+        n = self.n
         if not prev_tokens:
             prev_tokens = []
-        # assert len(prev_tokens) == n - 1    # check n-gram size
+        assert len(prev_tokens) == n - 1    # check n-gram size
 
         tokens = prev_tokens + [token]
 
