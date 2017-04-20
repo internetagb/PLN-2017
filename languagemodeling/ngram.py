@@ -251,13 +251,17 @@ class InterpolatedNGram(NGram):
         """
         self.n = n
         self.counts = counts = defaultdict(int)
-        words_count = len(sents)
         self.gamma = gamma
-        self.addone = addone
+        self.models = models = []
+        words_count = len(sents)
 
-        word_types = set(word for sent in sents for word in sent)
-        # add 1 because of "end of sentece"('</s>') delimiter.
-        self.V = len(word_types) + 1
+        if addone:
+            models.append(AddOneNGram(1, sents))
+        else:
+            models.append(NGram(1, sents))
+
+        for i in range(2, n+1):
+            models.append(NGram(i, sents))
 
         for sent in sents:
             words_count += len(sent)
@@ -283,7 +287,8 @@ class InterpolatedNGram(NGram):
     def cond_prob(self, token, prev_tokens=None):
 
         n = self.n
-        addone = self.addone
+        models = self.models
+        lambdas = self.lambdas
 
         if not prev_tokens:
             prev_tokens = []
@@ -296,17 +301,9 @@ class InterpolatedNGram(NGram):
 
         for i in range(n):
             prev_tokens = prev_tokens[i:]
-            lambd = self.lambdas(prev_tokens, lambda_list)
+            lambd = lambdas(prev_tokens, lambda_list)
             lambda_list.append(lambd)
-
-            if (not prev_tokens) and addone:
-                p1 = self.counts[token] + 1.0
-                p2 = self.counts[tuple(prev_tokens)] + self.V
-                if p2 != 0:
-                    qMLprob = float(p1)/p2
-
-            else:
-                qMLprob = super().cond_prob(token, prev_tokens)
+            qMLprob = models[n-1-i].cond_prob(token, prev_tokens)
             current_prob = lambda_list[i] * qMLprob
             probs.append(current_prob)
 
