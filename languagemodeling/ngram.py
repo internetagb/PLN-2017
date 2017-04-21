@@ -337,6 +337,8 @@ class BackOffNGram(NGram):
         self.beta = beta
         self.models = models = []
         self._A = A = defaultdict(set)
+        self.addone = addone
+        self.V = float(len(set(word for sent in sents for word in sent)) + 1)
 
         if beta:
             train_sents = sents
@@ -374,20 +376,25 @@ class BackOffNGram(NGram):
         prob = 0.0
 
         if not prev_tokens:
-            prev_tokens = []
-        # assert len(prev_tokens) == n - 1    # check n-gram size
+            c = self.count(tuple([token]))
+            cc = float(self.count(()))
 
-        next_tokens = self._A[tuple(prev_tokens)]
+            if self.addone:
+                prob = (c + 1) / (cc + self.V)
+            else:
+                prob = c / cc
 
-        if token in next_tokens:
-            c_disc = self.count(tuple(prev_tokens + [token])) - self.beta
-            c = self.count(tuple(prev_tokens))
-            prob = c_disc/c
         else:
-            alpha = self.alpha(prev_tokens)
-            prob_tmp = self.cond_prob(token, prev_tokens[:-1])
-            denom = self.denom(prev_tokens)
-            prob = alpha*(prob_tmp/denom)
+            if token in self.A(prev_tokens):
+                c_disc = self.count(prev_tokens + tuple([token])) - self.beta
+                c = self.count(tuple(prev_tokens))
+                prob = c_disc/float(c)
+            else:
+                alpha = self.alpha(tuple(prev_tokens))
+                prob_tmp = self.cond_prob(token, prev_tokens[1:])
+                if prob_tmp != 0:
+                    denom = self.denom(tuple(prev_tokens))
+                    prob = alpha*(prob_tmp/denom)
 
         return prob
 
@@ -401,8 +408,7 @@ class BackOffNGram(NGram):
                 c_disc = self.count(ngram + tuple([x])) - self.beta
                 c = self.count(ngram)
                 sumat += c_disc/c
-            if ngram not in _alpha:
-                _alpha[ngram] = 1.0-sumat
+            _alpha[ngram] = 1.0-sumat
 
         return _alpha
 
