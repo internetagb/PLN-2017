@@ -358,7 +358,8 @@ class BackOffNGram(NGram):
             for ngram, val in model.counts.items():
                 if len(ngram) == n_model:
                     nm1gram = ngram[:-1]
-                    A[nm1gram].add(ngram[-1])
+                    if nm1gram != ():
+                        A[nm1gram].add(ngram[-1])
 
         if beta is None:
             held_out = sents[int(0.9*len(sents)):]
