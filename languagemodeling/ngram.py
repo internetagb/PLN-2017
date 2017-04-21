@@ -349,17 +349,14 @@ class BackOffNGram(NGram):
             train_sents = sents[:int(0.9*len(sents))]
         else:
             train_sents = sents
-
         for i in range(1, n+1):
             models.append(NGram(i, train_sents))
-
-        for model in models:
+        for model in models[1:]:
             n_model = model.n
             for ngram, val in model.counts.items():
                 if len(ngram) == n_model:
                     nm1gram = ngram[:-1]
-                    if nm1gram != ():
-                        A[nm1gram].add(ngram[-1])
+                    A[nm1gram].add(ngram[-1])
 
         if beta is None:
             held_out = sents[int(0.9*len(sents)):]
@@ -436,10 +433,8 @@ class BackOffNGram(NGram):
         max_log_prob = float('-inf')
         for j in [i*0.1 for i in range(10)]:
             self.beta = float(j)
-
             self._alpha = self.calculate_alpha()
             self._denom = self.calculate_denom()
-
             log_prob = self.log_probability(held_out)
             if max_log_prob < log_prob:
                 max_log_prob = log_prob
