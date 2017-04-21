@@ -419,9 +419,8 @@ class BackOffNGram(NGram):
         for ngram, val in self._A.items():
             sumat = 0
             for x in val:
-                c_disc = self.count(ngram[1:] + tuple([x])) - self.beta
-                c = self.count(ngram[1:])
-                sumat += c_disc/c
+                sumat += self.cond_prob(x, ngram[1:])
+
             _denom[ngram] = 1.0-sumat
 
         return _denom
