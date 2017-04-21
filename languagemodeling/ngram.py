@@ -16,7 +16,12 @@ def ngram_delim(n, sent):
 def log2(x):
     """Calculate log (base 2) of x.
     """
-    return log(x, 2)
+    if x <= 0:
+        result = float('-inf')
+    else:
+        result = log(x, 2)
+
+    return result
 
 
 class NGram(object):
@@ -393,8 +398,8 @@ class BackOffNGram(NGram):
             else:
                 alpha = self.alpha(tuple(prev_tokens))
                 prob_tmp = self.cond_prob(token, prev_tokens[1:])
-                if prob_tmp != 0:
-                    denom = self.denom(tuple(prev_tokens))
+                denom = self.denom(tuple(prev_tokens))
+                if prob_tmp != 0 and denom != 0:
                     prob = alpha*(prob_tmp/denom)
 
         return prob
@@ -440,7 +445,6 @@ class BackOffNGram(NGram):
                 k = j
 
         self.beta = k
-
         self._alpha = self.calculate_alpha()
         self._denom = self.calculate_denom()
 
