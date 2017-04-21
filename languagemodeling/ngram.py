@@ -340,10 +340,10 @@ class BackOffNGram(NGram):
         self.addone = addone
         self.V = float(len(set(word for sent in sents for word in sent)) + 1)
 
-        if beta >= 0.0:
-            train_sents = sents
-        else:
+        if beta is None:
             train_sents = sents[:int(0.9*len(sents))]
+        else:
+            train_sents = sents
 
         for i in range(1, n+1):
             models.append(NGram(i, train_sents))
@@ -355,12 +355,12 @@ class BackOffNGram(NGram):
                     nm1gram = ngram[:-1]
                     A[nm1gram].add(ngram[-1])
 
-        if beta >= 0.0:
-            self._alpha = self.calculate_alpha()
-            self._denom = self.calculate_denom()
-        else:
+        if beta is None:
             held_out = sents[int(0.9*len(sents)):]
             beta = self.calculate_beta(held_out)
+        else:
+            self._alpha = self.calculate_alpha()
+            self._denom = self.calculate_denom()
 
     def count(self, tokens):
         n = len(tokens)
@@ -385,8 +385,9 @@ class BackOffNGram(NGram):
                 prob = c / cc
 
         else:
-            if token in self.A(prev_tokens):
-                c_disc = self.count(prev_tokens + tuple([token])) - self.beta
+            if token in self.A(tuple(prev_tokens)):
+                tokens = tuple(prev_tokens) + tuple([token])
+                c_disc = self.count(tokens) - self.beta
                 c = self.count(tuple(prev_tokens))
                 prob = c_disc/float(c)
             else:
@@ -425,23 +426,23 @@ class BackOffNGram(NGram):
 
         return _denom
 
-    # def calculate_beta(self, held_out):
-    #     max_log_prob = float('-inf')
-    #     for j in [i*0.1 for i in range(10)]:
-    #         self.beta = float(j)
+    def calculate_beta(self, held_out):
+        max_log_prob = float('-inf')
+        for j in [i*0.1 for i in range(10)]:
+            self.beta = float(j)
 
-    #         self._alpha = self.calculate_alpha()
-    #         self._denom = self.calculate_denom()
+            self._alpha = self.calculate_alpha()
+            self._denom = self.calculate_denom()
 
-    #         log_prob = self.log_probability(held_out)
-    #         if max_log_prob < log_prob:
-    #             max_log_prob = log_prob
-    #             k = j
+            log_prob = self.log_probability(held_out)
+            if max_log_prob < log_prob:
+                max_log_prob = log_prob
+                k = j
 
-    #     self.beta = k
+        self.beta = k
 
-    #     self._alpha = self.calculate_alpha()
-    #     self._denom = self.calculate_denom()
+        self._alpha = self.calculate_alpha()
+        self._denom = self.calculate_denom()
 
     def A(self, tokens):
         """Set of words with counts > 0 for a k-gram with 0 < k < n.
