@@ -256,7 +256,6 @@ class InterpolatedNGram(NGram):
         if gamma:
             train_sents = sents
         else:
-            # import pdb; pdb.set_trace()
             train_sents = sents[:int(0.9*len(sents))]
 
         if addone:
@@ -319,3 +318,143 @@ class InterpolatedNGram(NGram):
             prev_tokens = prev_tokens[1:]
 
         return prob
+
+
+class BackOffNGram(NGram):
+
+    def __init__(self, n, sents, beta=None, addone=True):
+        """
+        Back-off NGram model with discounting as described by Michael Collins.
+
+        n -- order of the model.
+        sents -- list of sentences, each one being a list of tokens.
+
+        beta -- discounting hyper-parameter (if not given, estimate using
+            held-out data).
+        addone -- whether to use addone smoothing (default: True).
+        """
+        self.n = n
+        self.beta = beta
+        self.models = models = []
+        self._A = A = defaultdict(set)
+
+        if beta:
+            train_sents = sents
+        else:
+            train_sents = sents[:int(0.9*len(sents))]
+
+        for i in range(1, n+1):
+            models.append(NGram(i, train_sents))
+
+        for model in models:
+            n_model = model.n
+            for ngram, val in model.counts.items():
+                if len(ngram) == n_model:
+                    nm1gram = ngram[:-1]
+                    A[nm1gram].add(ngram[-1])
+
+        if beta:
+            self._alpha = self.calculate_alpha()
+            self._denom = self.calculate_denom()
+        else:
+            held_out = sents[int(0.9*len(sents)):]
+            beta = self.calculate_beta(held_out)
+
+    def count(self, tokens):
+        n = len(tokens)
+
+        if tokens == n*('<s>',):
+            n += 1
+        count = self.models[n-1].counts[tokens]
+
+        return count
+
+    def cond_prob(self, token, prev_tokens=None):
+
+        prob = 0.0
+
+        if not prev_tokens:
+            prev_tokens = []
+        # assert len(prev_tokens) == n - 1    # check n-gram size
+
+        next_tokens = self._A[tuple(prev_tokens)]
+
+        if token in next_tokens:
+            c_disc = self.count(tuple(prev_tokens + [token])) - self.beta
+            c = self.count(tuple(prev_tokens))
+            prob = c_disc/c
+        else:
+            alpha = self.alpha(prev_tokens)
+            prob_tmp = self.cond_prob(token, prev_tokens[:-1])
+            denom = self.denom(prev_tokens)
+            prob = alpha*(prob_tmp/denom)
+
+        return prob
+
+    def calculate_alpha(self):
+
+        _alpha = defaultdict(float)
+
+        for ngram, val in self._A.items():
+            sumat = 0
+            for x in val:
+                c_disc = self.count(ngram + tuple([x])) - self.beta
+                c = self.count(ngram)
+                sumat += c_disc/c
+            if ngram not in _alpha:
+                _alpha[ngram] = 1.0-sumat
+
+        return _alpha
+
+    def calculate_denom(self):
+
+        _denom = defaultdict(float)
+
+        for ngram, val in self._A.items():
+            sumat = 0
+            for x in val:
+                c_disc = self.count(ngram[1:] + tuple([x])) - self.beta
+                c = self.count(ngram[1:])
+                sumat += c_disc/c
+            _denom[ngram] = 1.0-sumat
+
+        return _denom
+
+    # def calculate_beta(self, held_out):
+    #     max_log_prob = float('-inf')
+    #     for j in [i*0.1 for i in range(10)]:
+    #         self.beta = float(j)
+
+    #         self._alpha = self.calculate_alpha()
+    #         self._denom = self.calculate_denom()
+
+    #         log_prob = self.log_probability(held_out)
+    #         if max_log_prob < log_prob:
+    #             max_log_prob = log_prob
+    #             k = j
+
+    #     self.beta = k
+
+    #     self._alpha = self.calculate_alpha()
+    #     self._denom = self.calculate_denom()
+
+    def A(self, tokens):
+        """Set of words with counts > 0 for a k-gram with 0 < k < n.
+
+        tokens -- the k-gram tuple.
+        """
+        return self._A.get(tokens, set())
+
+    def alpha(self, tokens):
+        """Missing probability mass for a k-gram with 0 < k < n.
+
+        tokens -- the k-gram tuple.
+        """
+        return self._alpha.get(tokens, 1.0)
+
+    def denom(self, tokens):
+        """Normalization factor for a k-gram with 0 < k < n.
+
+        tokens -- the k-gram tuple.
+        """
+        return self._denom.get(tokens, 1.0)
