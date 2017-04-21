@@ -340,7 +340,7 @@ class BackOffNGram(NGram):
         self.addone = addone
         self.V = float(len(set(word for sent in sents for word in sent)) + 1)
 
-        if beta:
+        if beta >= 0.0:
             train_sents = sents
         else:
             train_sents = sents[:int(0.9*len(sents))]
@@ -355,7 +355,7 @@ class BackOffNGram(NGram):
                     nm1gram = ngram[:-1]
                     A[nm1gram].add(ngram[-1])
 
-        if beta:
+        if beta >= 0.0:
             self._alpha = self.calculate_alpha()
             self._denom = self.calculate_denom()
         else:
