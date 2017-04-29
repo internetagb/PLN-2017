@@ -7,14 +7,14 @@ Ejercicio 1: Corpus AnCora: Estadísticas de etiquetas POS
 >Se hace un análisis estadístico de etiquetas del Corpus AnCora.
 >Los resultados de este análisis se mostrarán a continuación.
 
-###Estadísticas básicas
+### Estadísticas básicas
 >Cantidad de oraciones: **17378**
 >Cantidad de ocurrencias de palabras: **517194**
 >Cantidad de tipos de palabras: **46501**
 >Cantidad de etiquetas: **85**
 
 
-###Etiquetas mas frecuentes
+### Etiquetas mas frecuentes
 
 | Tag | Frecuencia | Porcentaje | 5 palabras mas frecuentes |
 | :---: | :---: | :---: | :---: |
@@ -43,7 +43,7 @@ Ejercicio 1: Corpus AnCora: Estadísticas de etiquetas POS
 > **cc:** conjuncion coordinada.
 
 
-###Niveles de ambigüedad
+### Niveles de ambigüedad
 
 
 | Nivel de ambigüedad |  Cantidad  | Porcentaje |  5 palabras mas frecuentes|
