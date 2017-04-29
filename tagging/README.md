@@ -8,10 +8,10 @@ Ejercicio 1: Corpus AnCora: Estadísticas de etiquetas POS
 >Los resultados de este análisis se mostrarán a continuación.
 
 ### Estadísticas básicas
->Cantidad de oraciones: **17378**
->Cantidad de ocurrencias de palabras: **517194**
->Cantidad de tipos de palabras: **46501**
->Cantidad de etiquetas: **85**
+>Cantidad de oraciones: **17378**  
+>Cantidad de ocurrencias de palabras: **517194**  
+>Cantidad de tipos de palabras: **46501**  
+>Cantidad de etiquetas: **85**  
 
 
 ### Etiquetas mas frecuentes
@@ -31,16 +31,16 @@ Ejercicio 1: Corpus AnCora: Estadísticas de etiquetas POS
 
 #### Descripción de etiquetas
 
-> **sp000:** preposición (tag único, es decir no hay otro tipo de preposiciones).
-> **nc0s000:** sustantivo común singular.
-> **da0000:** artículo definido.
-> **aq0000:** adjetivo descriptivo.
-> **fc:** coma ("**,**").
-> **np00000:** sustantivo propio.
-> **nc0p000:** sustantivo común plural.
-> **fp:** punto ("**.**").
-> **rg:** adverbio general
-> **cc:** conjuncion coordinada.
+> **sp000:** preposición (tag único, es decir no hay otro tipo de preposiciones).  
+> **nc0s000:** sustantivo común singular.  
+> **da0000:** artículo definido.  
+> **aq0000:** adjetivo descriptivo.  
+> **fc:** coma ("**,**").  
+> **np00000:** sustantivo propio.  
+> **nc0p000:** sustantivo común plural.  
+> **fp:** punto ("**.**").  
+> **rg:** adverbio general  
+> **cc:** conjuncion coordinada.  
 
 
 ### Niveles de ambigüedad
