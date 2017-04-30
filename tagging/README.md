@@ -59,3 +59,21 @@ Ejercicio 1: Corpus AnCora: Estadísticas de etiquetas POS
 |         9           |     0      |   0.0 %    | |
 
 
+Ejercicio 2: Baseline Tagger
+----------------------------
+
+>El objetivo es etiquetar las palabras de alguna manera, es decir, hacer un
+>etiquetador.
+>Lo que se hace, en la etapa de entrenamiento, es ver cual es el *tag* mas
+>frecuente con el que se etiqueta a cada palabra.
+>Ese, es el *tag* con el que se etiquetará a la palabra correspondiente.
+>A estos *tags*, desde el punto de vista de implementación, los obtenemos
+>contando, para las etiquetas de cada palabra, cuantas veces ocurre cada una,
+>y seleccionamos la de mayor número de ocurrencias.
+>Finalmente, a esta información la guardamos en un diccionario, donde las
+>claves corresponden a las palabras, y los valores, al *tag* mas frecuente
+>con el que se etiqueta a esa palabra.
+>Al momento de etiquetar, busco en este diccionario, el valor de esa
+>palabra, y si me encuentro con una palabra que no esta en el diccionario,
+>es decir, una palabra no vista durante el entrenamiento (*unknown*),
+>la etiquetamos con un *tag* determinado, específicamente, *nc0s000*.
