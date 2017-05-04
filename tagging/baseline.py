@@ -1,4 +1,4 @@
-from collections import Counter
+from collections import Counter, defaultdict
 
 
 class BaselineTagger:
@@ -8,14 +8,11 @@ class BaselineTagger:
         tagged_sents -- training sentences, each one being a list of pairs.
         """
         self.word_tag = word_tag = {}
-        wt_tmp = {}
+        wt_tmp = defaultdict(list)
 
         for tagged_sent in tagged_sents:
             for word, tag in tagged_sent:
-                if word not in wt_tmp:
-                    wt_tmp[word] = [tag]
-                else:
-                    wt_tmp[word].append(tag)
+                wt_tmp[word].append(tag)
 
         for word in wt_tmp:
             word_tag[word] = Counter(wt_tmp.get(word)).most_common(1)[0][0]
