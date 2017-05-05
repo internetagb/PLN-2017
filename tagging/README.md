@@ -77,3 +77,21 @@ Ejercicio 2: Baseline Tagger
 >palabra, y si me encuentro con una palabra que no esta en el diccionario,
 >es decir, una palabra no vista durante el entrenamiento (*unknown*),
 >la etiquetamos con un *tag* determinado, específicamente, *nc0s000*.
+
+Ejercicio 3: Entrenamiento y Evaluación de Taggers
+--------------------------------------------------
+
+>Usando el etiquetador *Baseline*, puede haber errores al momento de etiquetar
+>palabras.
+>Vamos a analizar el porcetaje de etiquetado correcto sobre el total de
+>palabras y también sobre las palabras conocidas y desconocidas.
+>También se calculará una *matriz de confusión*, para mostrar en que porcentaje
+>una palabra con etiqueta *x* se etiquetó incorrectamente con etiqueta *y*.
+
+### Resultados obtenidos
+
+>Precisión general: 87.59%  
+>Precisión para palabras desconocidas: 18.01%  
+>Precisión: 95.27%
+
+#### Matriz de confusión
