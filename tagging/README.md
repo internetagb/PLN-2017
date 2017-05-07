@@ -30,7 +30,6 @@ Ejercicio 1: Corpus AnCora: Estadísticas de etiquetas POS
 |   cc    |    15023     |  2.905 %   | y, pero, o, Pero, e                    |
 
 #### Descripción de etiquetas
-
 > **sp000:** preposición (tag único, es decir no hay otro tipo de preposiciones).  
 > **nc0s000:** sustantivo común singular.  
 > **da0000:** artículo definido.  
@@ -95,3 +94,34 @@ Ejercicio 3: Entrenamiento y Evaluación de Taggers
 >Precisión: 95.27%
 
 #### Matriz de confusión
+
+|  | sp000 | nc0s000 | da0000 | aq0000 | fc | nc0p000 | rg | np00000 | fp | cc |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **sp000** | 14.284 | 0.047 | 0.0 | 0.0 | 0.0 | 0.0 | 0.005 | 0.0 | 0.0 | 0.0 |
+| **nc0s000** | 0.002 | 12.241 | 0.0 | 0.234 | 0.0 | 0.001 | 0.025 | 0.001 | 0.0 | 0.001 |
+| **da0000** | 0.0 | 0.151 | 9.543 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 |
+| **aq0000** | 0.005 | 2.061 | 0.0 | 4.839 | 0.0 | 0.135 | 0.003 | 0.0 | 0.0 | 0.0 |
+| **fc** | 0.0 | 0.0 | 0.0 | 0.0 | 5.85 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 |
+| **nc0p000** | 0.0 | 1.237 | 0.0 | 0.182 | 0.0 | 4.102 | 0.0 | 0.0 | 0.0 | 0.0 |
+| **rg** | 0.018 | 0.314 | 0.0 | 0.044 | 0.0 | 0.0 | 3.269 | 0.0 | 0.0 | 0.022 |
+| **np00000** | 0.003 | 2.039 | 0.0 | 0.001 | 0.0 | 0.003 | 0.0 | 1.523 | 0.0 | 0.001 |
+| **fp** | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 3.55 | 0.0 |
+| **cc** | 0.001 | 0.014 | 0.0 | 0.0 | 0.0 | 0.0 | 0.049 | 0.001 | 0.0 | 3.341 |
+
+Ejercicio 4: Hidden Markov Models y Algoritmo de Viterbi
+--------------------------------------------------------
+
+### Hidden Markov Models (HMM)
+
+>Se quiere calcular la probabilidad conjunta de una oración y una secuencia
+>de *tags*, es decir la probabilidad de que una oración sea etiquetada con esa
+>secuencia.
+>Para esto, utilizamos la supocición de Markov, para calcular la probabilidad
+>de que ocurra un *tag*, dado que ocurrieron ciertos *tags* previos, y además,
+>la probabilidad de que ocurra la palabra dado el *tag* (para cada par de
+>etiqueta y palabra).
+>Desde el punto de vista implementación, esto se calcula en la clase HMM,
+>ingresandole los valores de tamaño de n-grama, tags, probabilidades de
+>transición y probabilidades de palabras dado un cierto tag.
+
+### Algoritmo de Viterbi
