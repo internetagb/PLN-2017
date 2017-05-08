@@ -1,4 +1,5 @@
 from math import log2
+from collections import defaultdict
 
 
 class HMM:
@@ -115,6 +116,8 @@ class HMM:
 
         sent -- the sentence.
         """
+        tagger = ViterbiTagger(self)
+        return tagger.tag(sent)
 
 
 class ViterbiTagger:
@@ -123,9 +126,37 @@ class ViterbiTagger:
         """
         hmm -- the HMM.
         """
+        self.hmm = hmm
 
     def tag(self, sent):
         """Returns the most probable tagging for a sentence.
 
         sent -- the sentence.
         """
+        hmm = self.hmm
+        self._pi = pi = defaultdict(defaultdict)
+        pi[0][('<s>',)*(hmm.n-1)] = (0.0, [])
+
+        for k in range(1, len(sent)+1):
+            for v in hmm.tagset:
+                for prev_tags, (prob, tags) in pi[k-1].items():
+                    e = hmm.out_prob(sent[k-1], v)
+                    q = hmm.trans_prob(v, prev_tags)
+                    if q*e > 0.0:
+                        prob += log2(q) + log2(e)
+                        prev_tags = (prev_tags + (v,))[1:]
+                        if (prev_tags not in pi[k-1] or
+                                prob > pi[k-1][prev_tags][0]):
+                            pi[k][prev_tags] = (prob, tags + [v])
+
+        final_tags = []
+        max_prob = float('-inf')
+        for prev_tags, (prob, tags) in pi[len(sent)].items():
+            q = hmm.trans_prob('</s>', prev_tags)
+            if q > 0.0:
+                prob += log2(q)
+                if prob > max_prob:
+                    max_prob = prob
+                    final_tags = tags
+
+        return final_tags

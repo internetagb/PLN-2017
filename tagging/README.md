@@ -125,3 +125,26 @@ Ejercicio 4: Hidden Markov Models y Algoritmo de Viterbi
 >transición y probabilidades de palabras dado un cierto tag.
 
 ### Algoritmo de Viterbi
+
+>Este algoritmo busca encontrar cual es el etiquetado más probable de una
+>oración sin tener que revisar todas las combinaciones posibles que hay entre
+>los *tags*.
+>Para esto, se va calculando cual es la probabilidad de tags mas alta hasta el
+>momento, y ahí, se analiza cual es el siguiente *tag* que da la probabilidad
+>más alta.
+>Cuando se llega al final de la oración, elegimos los n-1 *tags* que tienen más
+>probabilidad de etiquetar el final de la oración (trabajando con n-gramas).
+
+>Al momento de implementar, la información de la probabilidad más alta hasta el
+>momento se guarda en un diccionario de diccionarios, con el nombre de la letra
+>griega *pi*.
+>Las *keys* de este diccionario *pi*, corresponden a la posición de la oración
+>cuya probabilidad y etiquetado hasta ese momento, se ve en sus *values*.
+>Con estos datos, queremos ver cual es el *tag* que hace que la probabilidad
+>hasta el momento junto con la de agregar este *tag* sea la más alta.
+>Para esto debemos calcular las probabilidades con cada una de las etiquetas
+>posibles, y elegir la probabilidad mayor (junto con la etiqueta que hizo que
+>esta probabilidad sea la mayor).
+>De esta forma se van eligiendo los *tags* más probables hasta llegar al final
+>de la oración, en donde se eligen los *tags* para el final de oración, que se
+>obtienen de la misma manera que antes.
