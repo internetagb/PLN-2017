@@ -160,3 +160,49 @@ class ViterbiTagger:
                     final_tags = tags
 
         return final_tags
+
+
+class MLHMM(HMM):
+
+    def __init__(self, n, tagged_sents, addone=True):
+        """
+        n -- order of the model.
+        tagged_sents -- training sentences, each one being a list of pairs.
+        addone -- whether to use addone smoothing (default: True).
+        """
+        self.n = n
+        self.addone = addone
+        self.counts = counts = defaultdict(int)
+        self.known_words = k_words = tuple()
+        self.tagset = tagset = tuple()
+        # self.trans = trans = defaultdict(defaultdict)
+        # self.out = out = defaultdict(defaultdict)
+
+        # initialize n-grams (of tags) count
+        for sent in tagged_sents:
+            words, tags = zip(*sent)
+            k_words += words
+            tagset += tags
+            # tags = ('<s>',)*(n-1) + tags + ('</s>',)
+            tags += ('</s>',)
+            for i in range(len(tags) - n + 1):
+                ngram = tuple(tags[i: i + n])
+                counts[ngram] += 1
+                counts[ngram[:-1]] += 1
+        # set known words and possible tags
+        k_words = set(k_words)
+        tagset = set(tagset)
+
+    def tcount(self, tokens):
+        """Count for an n-gram or (n-1)-gram of tags.
+
+        tokens -- the n-gram or (n-1)-gram tuple of tags.
+        """
+        return self.counts.get(tokens, 0)
+
+    def unknown(self, w):
+        """Check if a word is unknown for the model.
+
+        w -- the word.
+        """
+        return w not in self.known_words
