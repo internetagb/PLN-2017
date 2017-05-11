@@ -173,16 +173,16 @@ class MLHMM(HMM):
         self.n = n
         self.addone = addone
         self.counts = counts = defaultdict(int)
-        self.known_words = k_words = tuple()
-        self.tagset = tagset = tuple()
+        self.known_words = k_words = set()
+        self.tagset = tagset = set()
         self.trans = trans = defaultdict(lambda: defaultdict(float))
         self.out = out = defaultdict(lambda: defaultdict(float))
 
         # initialize n-grams (of tags) count
         for sent in tagged_sents:
             words, tags = zip(*sent)
-            k_words += words
-            tagset += tags
+            k_words = k_words.union(words)
+            tagset = tagset.union(tags)
             tags = ('<s>',)*(n-1) + tags + ('</s>',)
             words = ('<s>',)*(n-1) + words + ('</s>',)
             for i in range(len(tags) - n + 1):
@@ -190,9 +190,10 @@ class MLHMM(HMM):
                 counts[ngram] += 1
                 counts[ngram[:-1]] += 1
                 out[tags[i]][words[i]] += 1
+
         # set known words and possible tags
-        k_words = set(k_words)
-        tagset = set(tagset)
+        self.tagset = tagset
+        self.known_words = k_words
 
         # calculate trans probs
         for ng in [ngram for ngram in counts if len(ngram) == n]:
