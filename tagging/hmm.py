@@ -175,23 +175,34 @@ class MLHMM(HMM):
         self.counts = counts = defaultdict(int)
         self.known_words = k_words = tuple()
         self.tagset = tagset = tuple()
-        # self.trans = trans = defaultdict(defaultdict)
-        # self.out = out = defaultdict(defaultdict)
+        self.trans = trans = defaultdict(lambda: defaultdict(float))
+        self.out = out = defaultdict(lambda: defaultdict(float))
 
         # initialize n-grams (of tags) count
         for sent in tagged_sents:
             words, tags = zip(*sent)
             k_words += words
             tagset += tags
-            # tags = ('<s>',)*(n-1) + tags + ('</s>',)
-            tags += ('</s>',)
+            tags = ('<s>',)*(n-1) + tags + ('</s>',)
+            words = ('<s>',)*(n-1) + words + ('</s>',)
             for i in range(len(tags) - n + 1):
                 ngram = tuple(tags[i: i + n])
                 counts[ngram] += 1
                 counts[ngram[:-1]] += 1
+                out[tags[i]][words[i]] += 1
         # set known words and possible tags
         k_words = set(k_words)
         tagset = set(tagset)
+
+        # calculate trans probs
+        for ng in [ngram for ngram in counts if len(ngram) == n]:
+            trans[ng[:-1]][ng[-1]] = float(counts[ng])/counts[ng[:-1]]
+
+        # calculate out probs
+        for dict_value in out.values():
+            total = sum(dict_value.values())
+            for key, value in dict_value.items():
+                dict_value[key] = value/total
 
     def tcount(self, tokens):
         """Count for an n-gram or (n-1)-gram of tags.
