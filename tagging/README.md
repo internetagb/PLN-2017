@@ -148,3 +148,14 @@ Ejercicio 4: Hidden Markov Models y Algoritmo de Viterbi
 >De esta forma se van eligiendo los *tags* más probables hasta llegar al final
 >de la oración, en donde se eligen los *tags* para el final de oración, que se
 >obtienen de la misma manera que antes.
+
+
+Ejercicio 5: HMM POS Tagger
+---------------------------
+
+>Implementamos la clase MLHMM, en donde los parámetros se estiman usando
+>Maximun Likelihood. Además tenemos la opción de usar *addone smoothing*.
+
+>Entrenamos el modelo y lo evaluamos para uni-gramas, bi-gramas, tri-gramas y
+>cuatri-gramas.
+>Los resultados se muestran a continuación.

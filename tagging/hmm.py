@@ -173,10 +173,10 @@ class MLHMM(HMM):
         self.n = n
         self.addone = addone
         self.counts = counts = defaultdict(int)
-        self.known_words = k_words = set()
-        self.tagset = tagset = set()
-        self.trans = trans = defaultdict(lambda: defaultdict(float))
-        self.out = out = defaultdict(lambda: defaultdict(float))
+        k_words = set()
+        tagset = set()
+        trans = defaultdict(lambda: defaultdict(float))
+        out = defaultdict(lambda: defaultdict(float))
 
         # initialize n-grams (of tags) count
         for sent in tagged_sents:
@@ -191,19 +191,26 @@ class MLHMM(HMM):
                 counts[ngram[:-1]] += 1
                 out[tags[i]][words[i]] += 1
 
-        # set known words and possible tags
+        # store known words and possible tags
         self.tagset = tagset
         self.known_words = k_words
 
         # calculate trans probs
         for ng in [ngram for ngram in counts if len(ngram) == n]:
-            trans[ng[:-1]][ng[-1]] = float(counts[ng])/counts[ng[:-1]]
+            c1 = counts[ng]
+            c2 = counts[ng[:-1]]
+            if addone:
+                c1 += 1
+                c2 += len(k_words) + 1
+            trans[ng[:-1]][ng[-1]] = float(c1)/c2
+        self.trans = dict(trans)
 
         # calculate out probs
         for dict_value in out.values():
             total = sum(dict_value.values())
             for key, value in dict_value.items():
                 dict_value[key] = value/total
+        self.out = dict(out)
 
     def tcount(self, tokens):
         """Count for an n-gram or (n-1)-gram of tags.
