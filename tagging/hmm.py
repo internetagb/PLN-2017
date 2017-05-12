@@ -134,9 +134,8 @@ class ViterbiTagger:
         sent -- the sentence.
         """
         hmm = self.hmm
-        self._pi = pi = defaultdict(defaultdict)
+        pi = defaultdict(lambda: defaultdict(tuple))
         pi[0][('<s>',)*(hmm.n-1)] = (0.0, [])
-
         for k in range(1, len(sent)+1):
             for v in hmm.tagset:
                 for prev_tags, (prob, tags) in pi[k-1].items():
@@ -145,9 +144,10 @@ class ViterbiTagger:
                     if q*e > 0.0:
                         prob += log2(q) + log2(e)
                         prev_tags = (prev_tags + (v,))[1:]
-                        if (prev_tags not in pi[k-1] or
-                                prob > pi[k-1][prev_tags][0]):
+                        if (prev_tags not in pi[k] or
+                                prob > pi[k][prev_tags][0]):
                             pi[k][prev_tags] = (prob, tags + [v])
+        self._pi = dict(pi)
 
         final_tags = []
         max_prob = float('-inf')
@@ -180,7 +180,8 @@ class MLHMM(HMM):
 
         # initialize n-grams (of tags) count
         for sent in tagged_sents:
-            words, tags = zip(*sent)
+            words = tuple(word for (word, _) in sent)
+            tags = tuple(tag for (_, tag) in sent)
             k_words = k_words.union(words)
             tagset = tagset.union(tags)
             tags = ('<s>',)*(n-1) + tags + ('</s>',)
@@ -189,7 +190,7 @@ class MLHMM(HMM):
                 ngram = tuple(tags[i: i + n])
                 counts[ngram] += 1
                 counts[ngram[:-1]] += 1
-                out[tags[i]][words[i]] += 1
+                out[tags[i+n-1]][words[i+n-1]] += 1
 
         # store known words and possible tags
         self.tagset = tagset
@@ -201,7 +202,7 @@ class MLHMM(HMM):
             c2 = counts[ng[:-1]]
             if addone:
                 c1 += 1
-                c2 += len(k_words) + 1
+                c2 += len(tagset) + 1
             trans[ng[:-1]][ng[-1]] = float(c1)/c2
         self.trans = dict(trans)
 
@@ -225,3 +226,31 @@ class MLHMM(HMM):
         w -- the word.
         """
         return w not in self.known_words
+
+    def out_prob(self, word, tag):
+        """Probability of a word given a tag.
+
+        word -- the word.
+        tag -- the tag.
+        """
+        if self.addone and self.unknown(word):
+            result = 1.0/len(self.known_words)
+        else:
+            result = self.out.get(tag, {}).get(word, 0.0)
+
+        return result
+
+    def trans_prob(self, tag, prev_tags):
+        """Probability of a tag.
+
+        tag -- the tag.
+        prev_tags -- tuple with the previous n-1 tags (optional only if n = 1).
+        """
+        trans_tmp = self.trans.get(prev_tags, {})
+        if self.addone and tag not in trans_tmp:
+            c2 = self.tcount(prev_tags) + len(self.tagset) + 1
+            result = 1.0/c2
+        else:
+            result = trans_tmp.get(tag, 0.0)
+
+        return result

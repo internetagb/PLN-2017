@@ -159,3 +159,8 @@ Ejercicio 5: HMM POS Tagger
 >Entrenamos el modelo y lo evaluamos para uni-gramas, bi-gramas, tri-gramas y
 >cuatri-gramas.
 >Los resultados se muestran a continuación.
+
+| n | Precisión Total | Precisión de palabras conocidas | Precisión de palabras desconocidas | Tiempo de evaluación |
+| :---: | :---: | :---: | :---: | :---: |
+| 1 | 85.84% | 95.28% | 0.45% | 0 min 22.4 seg |
+| 2 | 91.34% | 97.63% | 34.33% | 3 min 18.4 seg |
