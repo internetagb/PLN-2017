@@ -166,3 +166,20 @@ Ejercicio 5: HMM POS Tagger
 | 2 | 91.34% | 97.63% | 34.33% | 3 min 18.4 seg |
 | 3 | 91.86% | 97.65% | 39.49% | 26 min 52.3 seg |
 | 4 | 91.61% | 97.31%% | 40.01% | 3 hs 17 min 52 seg |
+
+
+Ejercicio 6: Features para Etiquetado de Secuencias
+---------------------------------------------------
+
+>Implementamos diferentes *features*, que dada una *history*, analizamos:
+>- La palabra actual está en minúsculas.
+>- La palabra actual empieza en mayúscula.
+>- La palabra actual está en mayúsculas.
+>- La palabra actual es un número.
+
+>También definimos *features* con parámetros:
+>- La tupla de los últimos **n** *tags*.
+>- Aplicar un *feature* **f** a la palabra anterior a la actual.
+
+>Recordamos que la *history* contiene la oración completa, los *tags* previos
+>por eso podemos definir estas *features*.
