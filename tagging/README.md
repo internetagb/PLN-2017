@@ -181,5 +181,10 @@ Ejercicio 6: Features para Etiquetado de Secuencias
 >- La tupla de los últimos **n** *tags*.
 >- Aplicar un *feature* **f** a la palabra anterior a la actual.
 
->Recordamos que la *history* contiene la oración completa, los *tags* previos
+>Recordamos que la *history* contiene la oración completa y los *tags* previos,
 >por eso podemos definir estas *features*.
+
+
+Ejercicio 7: Maximum Entropy Markov Models
+------------------------------------------
+
