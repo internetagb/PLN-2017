@@ -162,10 +162,10 @@ Ejercicio 5: HMM POS Tagger
 
 | n | Precisión Total | Precisión de palabras conocidas | Precisión de palabras desconocidas | Tiempo de evaluación |
 | :---: | :---: | :---: | :---: | :---: |
-| 1 | 85.84% | 95.28% | 0.45% | 0 min 22.4 seg |
-| 2 | 91.34% | 97.63% | 34.33% | 3 min 18.4 seg |
-| 3 | 91.86% | 97.65% | 39.49% | 26 min 52.3 seg |
-| 4 | 91.61% | 97.31%% | 40.01% | 3 hs 17 min 52 seg |
+| 1 | 85.84% | 95.28% | 0.45% | 0 min 15.5 seg |
+| 2 | 91.34% | 97.63% | 34.33% | 0 min 30.7 seg |
+| 3 | 91.86% | 97.65% | 39.49% | 2 min 49.6 seg |
+| 4 | 91.61% | 97.31%% | 40.01% | 21 min 54.4 seg |
 
 
 Ejercicio 6: Features para Etiquetado de Secuencias

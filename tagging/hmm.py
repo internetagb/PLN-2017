@@ -137,11 +137,11 @@ class ViterbiTagger:
         pi = defaultdict(lambda: defaultdict(tuple))
         pi[0][('<s>',)*(hmm.n-1)] = (0.0, [])
         for k in range(1, len(sent)+1):
-            for v in hmm.tagset:
+            prob_tags = [(t, hmm.out_prob(sent[k-1], t)) for t in hmm.tagset]
+            for v, e in [t for t in prob_tags if t[1] > 0.0]:
                 for prev_tags, (prob, tags) in pi[k-1].items():
-                    e = hmm.out_prob(sent[k-1], v)
                     q = hmm.trans_prob(v, prev_tags)
-                    if q*e > 0.0:
+                    if q > 0.0:
                         prob += log2(q) + log2(e)
                         prev_tags = (prev_tags + (v,))[1:]
                         if (prev_tags not in pi[k] or
