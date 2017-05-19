@@ -16,15 +16,18 @@ class MEMM:
         """
         self.n = n
         self.known_words = set([p[0] for sent in tagged_sents for p in sent])
+        # set features for vector
         features = [word_lower, word_istitle, word_isupper, word_isdigit]
         features += [PrevWord(f) for f in features]
         features += [NPrevTags(i) for i in range(1, n)]
+        # select classifier
         if clf == 'mnb':
             classifier = MultinomialNB()
         elif clf == 'svc':
             classifier = LinearSVC()
         else:
             classifier = LogisticRegression()
+        # build pipeline
         pline = Pipeline([('vect', Vectorizer(features)),
                           ('clf', classifier)])
         histories = self.sents_histories(tagged_sents)

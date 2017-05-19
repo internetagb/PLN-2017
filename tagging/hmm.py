@@ -135,20 +135,26 @@ class ViterbiTagger:
         """
         hmm = self.hmm
         pi = defaultdict(lambda: defaultdict(tuple))
+        # initialize pi
         pi[0][('<s>',)*(hmm.n-1)] = (0.0, [])
         for k in range(1, len(sent)+1):
+            # list of pairs (word, P(word | tag)
             prob_tags = [(t, hmm.out_prob(sent[k-1], t)) for t in hmm.tagset]
+            # iterate over tags with P(word | tag) > 0
             for v, e in [t for t in prob_tags if t[1] > 0.0]:
+                # iterate over previous pi items
                 for prev_tags, (prob, tags) in pi[k-1].items():
                     q = hmm.trans_prob(v, prev_tags)
                     if q > 0.0:
                         prob += log2(q) + log2(e)
                         prev_tags = (prev_tags + (v,))[1:]
+                        # if prob is better
                         if (prev_tags not in pi[k] or
                                 prob > pi[k][prev_tags][0]):
                             pi[k][prev_tags] = (prob, tags + [v])
         self._pi = dict(pi)
 
+        # max prob search
         final_tags = []
         max_prob = float('-inf')
         for prev_tags, (prob, tags) in pi[len(sent)].items():
