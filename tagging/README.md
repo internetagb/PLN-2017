@@ -165,7 +165,7 @@ Ejercicio 5: HMM POS Tagger
 | 1 | 85.84% | 95.28% | 0.45% | 0 min 15.5 seg |
 | 2 | 91.34% | 97.63% | 34.33% | 0 min 30.7 seg |
 | 3 | 91.86% | 97.65% | 39.49% | 2 min 49.6 seg |
-| 4 | 91.61% | 97.31%% | 40.01% | 21 min 54.4 seg |
+| 4 | 91.61% | 97.31% | 40.01% | 21 min 54.4 seg |
 
 
 Ejercicio 6: Features para Etiquetado de Secuencias
@@ -188,3 +188,39 @@ Ejercicio 6: Features para Etiquetado de Secuencias
 Ejercicio 7: Maximum Entropy Markov Models
 ------------------------------------------
 
+>Se implementa un MEMM con un *pipeline* usando un vectorizador fijo,
+>y un clasificador que puede ser *Logistic Regression*, *Multinomial NB* o
+>*Linear SVC*, elegido al momento de entrenar el modelo.
+
+>Para *taggear* las oraciones utilizamos *beam inference* de tamaño 1.
+
+>Entrenamos el modelo y lo evaluamos para uni-gramas, bi-gramas, tri-gramas y
+>cuatri-gramas para cada uno de los clasificadores posibles.
+>Los resultados se muestran a continuación.
+
+### Clasificador "Logistic Regression"
+
+| n | Precisión Total | Precisión de palabras conocidas | Precisión de palabras desconocidas | Tiempo de evaluación |
+| :---: | :---: | :---: | :---: | :---: |
+| 1 | 91.10% | 94.55% | 59.84% | 0 min 30.8 seg |
+| 2 | 90.70% | 94.17% | 59.32% | 0 min 34.7 seg |
+| 3 | 90.88% | 94.24% | 60.42% | 0 min 36.3 seg |
+| 4 | 90.87% | 94.23% | 60.47% | 0 min 38.8 seg |
+
+### Clasificador "Multinomial NB"
+
+| n | Precisión Total | Precisión de palabras conocidas | Precisión de palabras desconocidas | Tiempo de evaluación |
+| :---: | :---: | :---: | :---: | :---: |
+| 1 | 77.02% | 81.47% | 36.72% | 41 min 0.8 seg |
+| 2 | 71.25% | 75.48% | 33.00% | 39 min 53.9 seg |
+| 3 | 66.43% | 70.28% | 31.62% | 43 min 54.6 seg |
+| 4 | 63.52% | 66.92% | 32.77% | 40 min 49.4 seg |
+
+### Clasificador "Linear SVC"
+
+| n | Precisión Total | Precisión de palabras conocidas | Precisión de palabras desconocidas | Tiempo de evaluación |
+| :---: | :---: | :---: | :---: | :---: |
+| 1 | 93.59% | 97.11% | 61.74% | 0 min 30.4 seg |
+| 2 | 93.55% | 97.04% | 61.98% | 0 min 35.7 seg |
+| 3 | 93.68% | 97.10% | 62.73% | 0 min 36.8 seg |
+| 4 | 93.69% | 97.13% | 62.54% | 0 min 39.6 seg |

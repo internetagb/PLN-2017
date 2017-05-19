@@ -50,7 +50,6 @@ class MEMM:
         result = []
         sent = []
         tags = ['<s>']*(n-1)
-        # print(tagged_sent)
         for word, tag in tagged_sent:
             sent.append(word)
             tags.append(tag)
