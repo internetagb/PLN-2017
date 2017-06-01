@@ -1,11 +1,13 @@
 """Evaulate a parser.
 
 Usage:
-  eval.py -i <file>
+  eval.py -i <file> [-m <m>] [-n <n>]
   eval.py -h | --help
 
 Options:
   -i <file>     Parsing model file.
+  -m <m>        Parse only sentences of length <= <m>.
+  -n <n>        Parse only <n> sentences (useful for profiling).
   -h --help     Show this screen.
 """
 from docopt import docopt
@@ -36,14 +38,24 @@ if __name__ == '__main__':
 
     print('Loading corpus...')
     files = '3LB-CAST/.*\.tbf\.xml'
-    corpus = SimpleAncoraCorpusReader('ancora/ancora-2.0/', files)
+    path = '/home/alangb/Escritorio/ancora-3.0.1es/'
+    corpus = SimpleAncoraCorpusReader(path, files)
     parsed_sents = list(corpus.parsed_sents())
 
     print('Parsing...')
     hits, total_gold, total_model = 0, 0, 0
+    hitsu, total_goldu, total_modelu = 0, 0, 0
+    n = opts['-n']
+    m = opts['-m']
+    if n is not None:
+        parsed_sent = list(parsed_sents)
+        parsed_sents = parsed_sents[:int(n)]
+    if m is not None:
+        parsed_sents = [t for t in parsed_sents if len(t.leaves()) <= int(m)]
     n = len(parsed_sents)
     format_str = '{:3.1f}% ({}/{}) (P={:2.2f}%, R={:2.2f}%, F1={:2.2f}%)'
     progress(format_str.format(0.0, 0, n, 0.0, 0.0, 0.0))
+
     for i, gold_parsed_sent in enumerate(parsed_sents):
         tagged_sent = gold_parsed_sent.pos()
 
@@ -57,16 +69,40 @@ if __name__ == '__main__':
         total_gold += len(gold_spans)
         total_model += len(model_spans)
 
+        # compute unlabeled scores
+        unlabeled_gold = set()
+        for span in gold_spans:
+            unlabeled_gold.add(span[1:])
+
+        unlabeled_model = set()
+        for span in model_spans:
+            unlabeled_model.add(span[1:])
+
+        hitsu += len(unlabeled_gold & unlabeled_model)
+        total_goldu += len(unlabeled_gold)
+        total_modelu += len(unlabeled_model)
+
         # compute labeled partial results
-        prec = float(hits) / total_model * 100
-        rec = float(hits) / total_gold * 100
-        f1 = 2 * prec * rec / (prec + rec)
+        precl = float(hits) / total_model * 100
+        recl = float(hits) / total_gold * 100
+        f1l = 2 * precl * recl / (precl + recl)
 
-        progress(format_str.format(float(i+1) * 100 / n, i+1, n, prec, rec, f1))
+        # compute unlabeled partial results
+        precu = float(hitsu) / total_modelu * 100
+        recu = float(hitsu) / total_goldu * 100
+        f1u = 2 * precu * recu / (precu + recu)
 
-    print('')
-    print('Parsed {} sentences'.format(n))
-    print('Labeled')
-    print('  Precision: {:2.2f}% '.format(prec))
-    print('  Recall: {:2.2f}% '.format(rec))
-    print('  F1: {:2.2f}% '.format(f1))
+        progress(format_str.format(float(i+1) * 100 / n,
+                                   i+1, n, precl, recl, f1l))
+
+    if n > 0:
+        print('')
+        print('Parsed {} sentences'.format(n))
+        print('\nLabeled')
+        print('  Precision: {:2.2f}% '.format(precl))
+        print('  Recall: {:2.2f}% '.format(recl))
+        print('  F1: {:2.2f}% '.format(f1l))
+        print('\nUnlabeled')
+        print('  Precision: {:2.2f}% '.format(precu))
+        print('  Recall: {:2.2f}% '.format(recu))
+        print('  F1: {:2.2f}% '.format(f1u))

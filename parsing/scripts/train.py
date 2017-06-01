@@ -24,6 +24,7 @@ models = {
     'flat': Flat,
     'rbranch': RBranch,
     'lbranch': LBranch,
+    # 'up': UPCFG,
 }
 
 
@@ -32,7 +33,8 @@ if __name__ == '__main__':
 
     print('Loading corpus...')
     files = 'CESS-CAST-(A|AA|P)/.*\.tbf\.xml'
-    corpus = SimpleAncoraCorpusReader('ancora/ancora-2.0/', files)
+    path = '/home/alangb/Escritorio/ancora-3.0.1es/'
+    corpus = SimpleAncoraCorpusReader(path, files)
 
     print('Training model...')
     model = models[opts['-m']](corpus.parsed_sents())
