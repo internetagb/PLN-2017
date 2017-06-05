@@ -9,7 +9,7 @@ class UPCFG:
     """Unlexicalized PCFG.
     """
 
-    def __init__(self, parsed_sents, start='sentence'):
+    def __init__(self, parsed_sents, start='sentence', horzMarkov=None):
         """
         parsed_sents -- list of training trees.
         """
@@ -20,6 +20,7 @@ class UPCFG:
 
         # initialize list of productions
         for t in ut:
+            t.chomsky_normal_form(horzMarkov=horzMarkov)
             for p in t.productions():
                 X = p.lhs()
                 YZ = p.rhs()
