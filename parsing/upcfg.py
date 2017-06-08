@@ -22,6 +22,7 @@ class UPCFG:
         # initialize list of productions
         for t in ut:
             t.chomsky_normal_form(horzMarkov=horzMarkov)
+            t.collapse_unary(collapsePOS=True)
             for p in t.productions():
                 X = p.lhs()
                 YZ = p.rhs()
