@@ -53,8 +53,10 @@ if __name__ == '__main__':
     if m is not None:
         parsed_sents = [t for t in parsed_sents if len(t.leaves()) <= int(m)]
     n = len(parsed_sents)
-    format_str = '{:3.1f}% ({}/{}) (P={:2.2f}%, R={:2.2f}%, F1={:2.2f}%)'
-    progress(format_str.format(0.0, 0, n, 0.0, 0.0, 0.0))
+    format_str = '{:3.1f}% ({}/{}) | Labeled: (P={:2.2f}%, R={:2.2f}%,'
+    format_str += ' F1={:2.2f}%) | Unlabeled: (P={:2.2f}%, R={:2.2f}%,'
+    format_str += ' F1={:2.2f}%)'
+    progress(format_str.format(0.0, 0, n, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
 
     for i, gold_parsed_sent in enumerate(parsed_sents):
         tagged_sent = gold_parsed_sent.pos()
@@ -93,7 +95,7 @@ if __name__ == '__main__':
         f1u = 2 * precu * recu / (precu + recu)
 
         progress(format_str.format(float(i+1) * 100 / n,
-                                   i+1, n, precl, recl, f1l))
+                                   i+1, n, precl, recl, f1l, precu, recu, f1u))
 
     if n > 0:
         print('')

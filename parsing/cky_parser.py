@@ -9,6 +9,19 @@ class CKYParser:
         grammar -- a binarised NLTK PCFG.
         """
         self.grammar = grammar
+        self.start = str(grammar.start())
+        prods = grammar.productions()
+        term_prods = []
+        non_term = []
+        for p in prods:
+            if p.__len__() == 1:
+                term_prods.append((str(p.lhs()), str(p.rhs()[0]), p.logprob()))
+            else:
+                prod = (str(p.lhs()), str(p.rhs()[0]), str(p.rhs()[1]))
+                prod += (p.logprob(),)
+                non_term.append(prod)
+        self._tm = term_prods
+        self._nt = non_term
 
     def parse(self, sent):
         """Parse a sequence of terminals.
@@ -17,33 +30,24 @@ class CKYParser:
         """
 
         n = len(sent)
-        prods = self.grammar.productions()
-        term_prods = []
-        non_term = []
-        for p in prods:
-            if p.__len__() == 1:
-                term_prods.append(p)
-            else:
-                prod = [str(p.lhs()), str(p.rhs()[0]), str(p.rhs()[1])]
-                prod.append(p.logprob())
-                non_term.append(prod)
         pi = defaultdict(dict)
-        bp = dict()
+        bp = {}
+        term_prods = self._tm
+        non_term = self._nt
 
         # base case
         for i in range(1, n+1):
+            # import pdb; pdb.set_trace()
             word = sent[i-1]
-            for p in [t for t in term_prods if t.rhs()[0] == word]:
-                term = str(p.lhs())
-                pi[(i, i)][term] = p.logprob()
-                bp[(i, i)] = defaultdict()
+            bp[(i, i)] = {}
+            for p in [t for t in term_prods if t[1] == word]:
+                term = p[0]
+                pi[(i, i)][term] = p[2]
                 bp[(i, i)][term] = Tree(term, [word])
         # recursive cases
         for l in range(1, n):
             for i in range(1, n-l+1):
                 j = i+l
-                # for X in N:
-                #     for prod in [t for t in non_term if str(t.lhs()) == X]:
                 bp[(i, j)] = defaultdict()
                 for prod in non_term:
                     X, Y, Z, prob = prod
@@ -54,8 +58,8 @@ class CKYParser:
                                 pi[(i, j)][X] = prob
                                 tree = [bp[(i, s)][Y], bp[(s+1, j)][Z]]
                                 bp[(i, j)][X] = Tree(X, tree)
-        lp = pi[(1, n)].get('S', float('-inf'))
-        t = bp[(1, n)].get('S', None)
+        lp = pi[(1, n)].get(self.start, float('-inf'))
+        t = bp[(1, n)].get(self.start, None)
 
         self._pi = dict(pi)
         self._bp = bp

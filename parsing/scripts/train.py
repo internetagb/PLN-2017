@@ -1,7 +1,7 @@
 """Train a parser.
 
 Usage:
-  train.py [-m <model>] -o <file>
+  train.py [-m <model>] [-n <order>] -o <file>
   train.py -h | --help
 
 Options:
@@ -9,14 +9,14 @@ Options:
                   flat: Flat trees
                   rbranch: Right branching trees
                   lbranch: Left branching trees
+  -n <order>    Horizontal Markovization order [default: None]
   -o <file>     Output model file.
   -h --help     Show this screen.
 """
 from docopt import docopt
 import pickle
-
 from corpus.ancora import SimpleAncoraCorpusReader
-
+from parsing.upcfg import UPCFG
 from parsing.baselines import Flat, RBranch, LBranch
 
 
@@ -24,7 +24,7 @@ models = {
     'flat': Flat,
     'rbranch': RBranch,
     'lbranch': LBranch,
-    # 'up': UPCFG,
+    'upcfg': UPCFG,
 }
 
 
@@ -37,7 +37,12 @@ if __name__ == '__main__':
     corpus = SimpleAncoraCorpusReader(path, files)
 
     print('Training model...')
-    model = models[opts['-m']](corpus.parsed_sents())
+    n = opts['-n']
+    m = opts['-m']
+    if n == 'None':
+        model = models[m](corpus.parsed_sents())
+    else:
+        model = models[m](corpus.parsed_sents(), horzMarkov=int(n))
 
     print('Saving...')
     filename = opts['-o']

@@ -17,6 +17,7 @@ class UPCFG:
         countsYZ = defaultdict(lambda: defaultdict(int))
         ut = [unlexicalize(t.copy(deep=True)) for t in parsed_sents]
         self.prods = prods = []
+        self.start = start
 
         # initialize list of productions
         for t in ut:
@@ -45,7 +46,7 @@ class UPCFG:
         sent, tags = zip(*tagged_sent)
         prob, tree = self.parser.parse(tags)
         if prob == float('-inf'):
-            tree = Flat([], 'S').parse(tagged_sent)
+            tree = Flat([], self.start).parse(tagged_sent)
         tree.un_chomsky_normal_form()
 
         return lexicalize(tree, sent)
