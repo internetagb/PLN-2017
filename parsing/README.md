@@ -37,7 +37,33 @@ Ejercicio 1: Evaluación de Parsers
 Ejercicio 2: Algoritmo CKY
 --------------------------
 
-> Ambigua
+> En el ejemplo de ambigüedad la oración que utilizaremos será
+> "Mario espía a Jonathan corriendo".
+> No queda claro si el que está corriendo es Mario o Jonathan.
+> El test que chequea esto, está en *test_ambiguo.py*
+
+> Los árboles posibles son:
+
+![](Arbol1.png)
+![](Arbol2.png)
+
+> Pero ya como la gramática es:
+
+| GRAMÁTICA |
+| :-: |
+| S -> Noun VP  [1.0] |
+| VP -> VP Vbg  [0.7] |
+| VP -> Verb PP  [0.3] |
+| PP -> Prep Noun [0.8] |
+| PP -> Prep NP  [0.2] |
+| NP -> Noun Vgb  [1.0] |
+| Noun -> 'Mario'  [0.6] |
+| Noun -> 'Jonathan'  [0.4] |
+| Verb -> 'espía'  [1.0] |
+| Vbg -> 'corriendo'  [1.0] |
+| Prep -> 'a'  [1.0] |
+
+> el arbol resultante es el primero.
 
 Ejercicio 3: PCFGs No Lexicalizadas
 -----------------------------------
